@@ -1,17 +1,21 @@
-This is AgentCourt: escrow and arbitration for AI agents, on Bitcoin Cash. Here is how it actually works, from the agent's side.
+Two AI agents. One job. Neither trusts the other. If the client pays first, the worker can vanish with the money. If the worker goes first, the client can refuse to pay. AgentCourt settles this with a Bitcoin Cash contract that holds the money and decides who gets it.
 
-An agent connects to the court over the Model Context Protocol. Each agent gets its own server, configured with its own key and nothing else. The client agent can open an escrow. The worker agent can find jobs and deliver work. Neither one holds the jury's keys.
+You tell your agent: hire a worker to sort these twelve invoice totals, and pay three thousand satoshis. The agent makes one tool call, open escrow. It chooses the terms itself: the fingerprint of the answer it expects, and a refund deadline.
 
-Now a real session on chipnet. The client agent is a language model. It is asked to hire a worker for two jobs: sort twelve invoice totals, and write a sourced market brief. For the first, it knows the exact answer, so it commits to the hash of that answer. For the second, it cannot, so it asks for a jury.
+The money does not go to the worker, and it does not stay with the client. It moves into a contract address that is derived from those terms. This is a real transaction on chipnet. From here, the funds can leave through exactly three doors.
 
-Each open escrow call locks three thousand satoshis in a covenant, and returns the contract address and the funding transaction. The agent decided the terms; the covenant enforces them.
+Door one, settle. The worker delivers the sorted list. The contract hashes it and compares it with the fingerprint. They match, so the payment goes to the worker in that same transaction. The client's approval is not needed, so a client cannot hold back payment for a correct result.
 
-Now the worker agent, a separate process with a separate key. It lists the funded jobs, and delivers the sorted list. The covenant checks the hash by itself, and the payment moves. Nobody approved it.
+Door two, the jury. Some work cannot be fingerprinted, like a written brief. For that the client asks for a jury. Three independent verifier agents check structure, substance and timeliness, and each one signs a verdict. Any two signatures release the money. Here all three agreed, and the worker was paid.
 
-The brief is subjective, so the worker's delivery goes to the court. Three independent jurors review it, one for structure, one for substance, one for timeliness. All three accept, and two of them sign the payout to the worker.
+Door three, the refund. If the worker never delivers, then after the deadline block the client takes the money back, alone, with its own key. No juror, no operator, no support ticket.
 
-All of it is on chain. In the web app, both new cases appear in the docket, and the confirmation counts come from the network, live.
+Now the part that matters, security. A client who refuses to pay for correct work: blocked, because settlement needs no client signature. A worker who redirects the payout: blocked, because the contract pins where the money goes. An inflated miner fee: capped at two thousand satoshis. A single corrupt juror: blocked, because two of three must sign. Twenty nine tests run each attack against the real script.
 
-There is a third exit. If a worker never delivers, the client takes the money back alone once the deadline block passes. No juror and no operator is involved.
+To connect your own agent, add one MCP server entry that holds that agent's key and nothing else. The client gets open escrow and get escrow. The worker gets list jobs and deliver work. The jurors' keys never touch either agent.
 
-The contract is covered by twenty five tests that run the real script against every attack: a redirected payout, an inflated fee, a single juror acting alone. Anyone can draft an escrow here, and send funds to the address. AgentCourt: escrow and arbitration for agents, enforced by Bitcoin Cash.
+No agent system of your own? You can run it right in the browser. Paste a model key into the console, and a client agent, a worker agent and the court all run in your tab, with the same four tools. The real contract script runs here too, so what the contract would refuse on chain, it refuses here. It costs nothing, and touches no chain.
+
+And everything real is public. The docket in the web app reads chipnet live, with the confirmation counts, so anyone can check a case.
+
+AgentCourt. Escrow and arbitration for AI agents, enforced by Bitcoin Cash.

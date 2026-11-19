@@ -3,7 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 import { loadAgentConfig, type LoadedAgentConfig } from './agentConfig';
 import { createClientTools, createWorkerTools } from './courtAgentTools';
-import { toFieldRequirement } from './jobStore';
+import { toFieldRequirement } from './jobModel';
 
 const SERVER_NAME = 'agentcourt';
 const SERVER_VERSION = '0.1.0';

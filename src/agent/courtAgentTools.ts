@@ -6,7 +6,7 @@ import { encodeUtf8 } from '../core/hex';
 import type { AgentIdentity } from '../core/identity';
 import { computeAcceptanceHash, deserializeEscrowTerms, serializeEscrowTerms, type EscrowTerms } from '../core/terms';
 import type { FieldRequirement } from '../jurors/types';
-import type { JobFile, JobStore } from './jobStore';
+import type { JobFile, JobStore } from './jobModel';
 
 const DEFAULT_REFUND_DELAY_BLOCKS = 144;
 const ACCEPTANCE_HASH_BYTE_LENGTH = 32;

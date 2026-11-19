@@ -5,7 +5,7 @@ import { deserializeEscrowTerms } from '../core/terms';
 import { conveneJury } from '../jurors/jury';
 import type { CaseBrief } from '../jurors/types';
 import { StructureJuror, SubstanceJuror, TimelinessJuror } from '../jurors/verifierJurors';
-import { toFieldRequirement, type JobFile, type JobStore } from './jobStore';
+import { toFieldRequirement, type JobFile, type JobStore } from './jobModel';
 
 /**
  * The court is the only process that holds juror keys. It convenes the jury for

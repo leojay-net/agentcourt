@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { createAgentIdentityFromHex, type AgentIdentity } from '../core/identity';
 import { decodeHex } from '../core/hex';
 import type { EscrowParties } from './courtAgentTools';
-import { createJobStore, type JobStore } from './jobStore';
+import { createJobStore } from './jobStore';
+import type { JobStore } from './jobModel';
 
 const PUBLIC_KEY_HASH_BYTE_LENGTH = 20;
 const COMPRESSED_PUBLIC_KEY_BYTE_LENGTH = 33;

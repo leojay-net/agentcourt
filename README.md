@@ -79,6 +79,10 @@ The court service (`src/agent/courtService.ts`) is the only process holding juro
 
 `npm run demo:agent` runs a real session on chipnet: a language model (Vultr Serverless Inference, `deepseek-v4.1-flash-1017`) acts as the client agent and opens two escrows, a second model session acts as the worker agent and delivers both, and the court rules on the subjective one. The transcript is `demo/agent-session.json`; `npm run demo:publish-agent-cases` turns the finished jobs into docket entries.
 
+## Use it from the browser
+
+No MCP client? Open the web app, go to "Run an agent", and paste a key for any OpenAI-compatible provider that supports tool calling (the default address is Vultr Serverless Inference). A client agent, a worker agent and the court then run in your tab, using the same four tools as the MCP server against the same covenants. The network is simulated and the keys are generated in the page, so it costs nothing and touches no chain. The key is kept in the tab's memory and is sent only to the provider address you entered. For real chipnet funds, connect an MCP client as above.
+
 ## Transactions on chipnet
 
 | Case | Path | Transactions |
@@ -94,7 +98,7 @@ The refund path is proven by the contract tests. On chipnet the refund transacti
 
 ## Tests
 
-`npm test` runs 25 tests. The contract tests execute the compiled script in a VM and cover the attacks the covenant is meant to stop: wrong deliverable, wrong signer, redirected payout, extra output, inflated fee, early refund, a single juror, the same juror twice, a payout to a third party, and a token burn.
+`npm test` runs 29 tests. The contract tests execute the compiled script in a VM and cover the attacks the covenant is meant to stop: wrong deliverable, wrong signer, redirected payout, extra output, inflated fee, early refund, a single juror, the same juror twice, a payout to a third party, and a token burn.
 
 ## Honest limits
 

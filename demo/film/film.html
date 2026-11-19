@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AgentCourt film</title>
+<style>
+@font-face { font-family: 'Newsreader'; src: url('fonts/newsreader-latin-wght-normal-CCVVNp6i.woff2'); font-weight: 200 800; }
+@font-face { font-family: 'Geist'; src: url('fonts/geist-latin-wght-normal-BgDaEnEv.woff2'); font-weight: 100 900; }
+@font-face { font-family: 'Geist Mono'; src: url('fonts/geist-mono-latin-wght-normal-XN7g48iV.woff2'); font-weight: 100 900; }
+:root {
+  --paper: #f5f4ee; --surface: #ffffff; --ink: #14201b; --muted: #4f5b55; --faint: #7b8680;
+  --line: #dedcd2; --line-strong: #c4c1b3; --green: #0a5c41; --green-tint: #e1eee7;
+  --alert: #a63d1e; --alert-tint: #f6e5de; --amber: #8a5a00; --amber-tint: #f7ecd2;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1440px; height: 900px; overflow: hidden; background: var(--paper); color: var(--ink); font-family: 'Geist', system-ui, sans-serif; }
+.mono { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.serif { font-family: 'Newsreader', Georgia, serif; }
+
+header { position: absolute; inset: 0 0 auto 0; height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; border-bottom: 1px solid var(--line); background: var(--paper); z-index: 5; }
+.brand { display: flex; align-items: center; gap: 12px; font-family: 'Newsreader', serif; font-size: 26px; font-weight: 600; }
+.rail { display: flex; gap: 6px; }
+.rail span { font-size: 13px; font-weight: 500; letter-spacing: 0.02em; color: var(--faint); padding: 7px 14px; border-radius: 999px; border: 1px solid transparent; transition: all 300ms var(--ease); }
+.rail span.current { color: var(--green); background: var(--green-tint); border-color: #bcd6c8; }
+
+#stage { position: absolute; inset: 76px 0 96px 0; }
+.scene { position: absolute; inset: 0; padding: 40px 64px; opacity: 0; visibility: hidden; transition: opacity 420ms var(--ease), visibility 0s linear 420ms; }
+.scene.active { opacity: 1; visibility: visible; transition: opacity 420ms var(--ease); }
+
+#captionBar { position: absolute; inset: auto 0 0 0; height: 96px; display: flex; align-items: center; justify-content: center; padding: 0 64px; background: var(--surface); border-top: 1px solid var(--line); font-size: 16.5px; line-height: 1.4; color: var(--ink); text-align: center; z-index: 5; }
+
+[data-at] { opacity: 0; transform: translateY(14px); transition: opacity 520ms var(--ease), transform 520ms var(--ease); }
+[data-at].on { opacity: 1; transform: none; }
+[data-at].fade-only { transform: none; }
+
+h1.display { font-family: 'Newsreader', serif; font-weight: 500; font-size: 84px; line-height: 1.02; letter-spacing: -0.02em; }
+h2.title { font-family: 'Newsreader', serif; font-weight: 500; font-size: 44px; line-height: 1.1; letter-spacing: -0.01em; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); font-size: 14px; }
+.chip b { font-family: 'Geist', sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 6px; }
+.tag.good { background: var(--green-tint); color: var(--green); }
+.tag.bad { background: var(--alert-tint); color: var(--alert); }
+.tag.wait { background: var(--amber-tint); color: var(--amber); }
+.code { font-family: 'Geist Mono', monospace; font-size: 16px; line-height: 1.7; white-space: pre-wrap; color: var(--ink); }
+.code .k { color: var(--green); } .code .s { color: #7a4a14; } .code .d { color: var(--faint); }
+
+/* Scene 0 */
+.problem { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; height: 100%; }
+.problem .lane { position: relative; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); padding: 28px 32px; overflow: hidden; }
+.lane h3 { font-family: 'Newsreader', serif; font-size: 28px; font-weight: 500; margin-bottom: 6px; }
+.lane p { color: var(--muted); font-size: 16px; }
+.party { position: absolute; width: 170px; height: 150px; border: 1.5px solid var(--ink); border-radius: 14px; background: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font-weight: 600; font-size: 16px; transition: opacity 600ms var(--ease), border-color 400ms; }
+.party small { font-weight: 400; color: var(--muted); font-size: 13px; }
+.party.left { left: 32px; top: 190px; } .party.right { right: 32px; top: 190px; }
+.party.gone { opacity: 0.18; border-style: dashed; }
+.token { position: absolute; left: 190px; top: 252px; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: var(--paper); display: grid; place-items: center; font-size: 11px; font-weight: 700; transition: transform 1500ms var(--ease), left 1500ms var(--ease); }
+.lane .verdict { position: absolute; left: 32px; right: 32px; bottom: 28px; padding: 14px 18px; border-radius: 10px; background: var(--alert-tint); color: var(--alert); font-weight: 600; font-size: 17px; }
+.titleCard { position: absolute; inset: 0; display: grid; place-items: center; background: var(--paper); text-align: center; }
+.titleCard .sub { margin-top: 20px; font-size: 22px; color: var(--muted); }
+
+/* Scene 1 */
+.split { display: grid; grid-template-columns: 560px 1fr; gap: 40px; height: 100%; }
+.bubble { padding: 16px 20px; border-radius: 14px; font-size: 18px; line-height: 1.5; margin-bottom: 16px; max-width: 520px; }
+.bubble.user { background: var(--green); color: #f5f4ee; margin-left: auto; border-bottom-right-radius: 4px; }
+.bubble.agent { background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.toolpill { display: inline-flex; gap: 10px; align-items: center; padding: 10px 14px; border: 1.5px solid var(--green); color: var(--green); border-radius: 10px; font-weight: 600; font-size: 16px; }
+.derive { margin-top: 18px; display: grid; gap: 10px; }
+.derive div { display: flex; justify-content: space-between; gap: 18px; padding: 12px 14px; background: var(--green-tint); border-radius: 10px; font-size: 14px; }
+.derive span:first-child { color: var(--muted); }
+
+/* Vault */
+.vault { position: relative; width: 300px; height: 300px; border: 2px solid var(--ink); border-radius: 20px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.vault .amount { font-family: 'Newsreader', serif; font-size: 54px; font-weight: 500; }
+.vault .label { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.lock { width: 44px; height: 52px; }
+.wallet { width: 190px; padding: 18px; border: 1.5px solid var(--ink); border-radius: 14px; background: var(--paper); text-align: center; font-weight: 600; }
+.wallet small { display: block; font-weight: 400; color: var(--muted); margin-top: 4px; font-size: 13px; }
+.coinRow { position: relative; height: 40px; width: 280px; }
+.coin { position: absolute; top: 0; width: 34px; height: 34px; border-radius: 50%; background: var(--green); opacity: 0; }
+.coin.on { animation: coinTravel 1.5s var(--ease) forwards; }
+@keyframes coinTravel { 0% { left: 0; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { left: calc(100% - 34px); opacity: 0; } }
+.coin.back.on { animation-name: coinBack; }
+@keyframes coinBack { 0% { left: calc(100% - 34px); opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { left: 0; opacity: 0; } }
+.coinRow::before { content: ''; position: absolute; left: 0; right: 0; top: 17px; border-top: 2px dashed var(--line-strong); }
+.coinCol { position: relative; height: 96px; width: 40px; }
+.coinCol::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; border-left: 2px dashed var(--line-strong); }
+.coinCol .coin { left: 3px; }
+.coinCol .coin.on { animation-name: coinDown; }
+@keyframes coinDown { 0% { top: 0; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { top: 62px; opacity: 0; } }
+.doors { display: grid; gap: 14px; width: 440px; }
+.door { display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: center; padding: 18px 20px; border: 1.5px solid var(--line-strong); border-radius: 14px; background: var(--surface); transition: border-color 400ms, background 400ms; }
+.door .n { font-family: 'Newsreader', serif; font-size: 40px; color: var(--green); }
+.door strong { display: block; font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase; }
+.door span { font-size: 15px; color: var(--muted); }
+.door.hot { border-color: var(--green); background: var(--green-tint); }
+.row { display: flex; align-items: center; gap: 36px; }
+.centerRow { display: flex; align-items: center; justify-content: center; height: 100%; gap: 56px; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+
+/* Scene 3 */
+.compare { display: grid; grid-template-columns: 1fr 70px 1fr; gap: 18px; align-items: center; margin: 24px 0; }
+.hashBox { padding: 18px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: var(--surface); }
+.hashBox label { display: block; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.hashBox .mono { font-size: 15px; word-break: break-all; }
+.equals { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--green); color: var(--green); display: grid; place-items: center; font-size: 38px; font-weight: 600; background: var(--green-tint); }
+.hashBox.match { border-color: var(--green); background: var(--green-tint); }
+
+/* Scene 4 */
+.jurors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 26px; }
+.seat { position: relative; padding: 22px; border: 1.5px solid var(--line-strong); border-radius: 14px; background: var(--surface); min-height: 214px; }
+.seat h4 { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+.seat p { font-size: 16px; line-height: 1.5; }
+.seat .vote { position: absolute; left: 22px; bottom: 22px; }
+.sigMeter { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+.sigMeter .pip { width: 46px; height: 12px; border-radius: 6px; background: var(--line); transition: background 400ms; }
+.sigMeter .pip.on { background: var(--green); }
+
+/* Scene 5 */
+.chain { display: flex; gap: 14px; align-items: center; margin: 34px 0; }
+.block { width: 150px; height: 86px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 600; transition: all 400ms var(--ease); }
+.block small { color: var(--muted); font-weight: 400; font-size: 12px; margin-top: 4px; }
+.block.deadline.on { border-color: var(--green); background: var(--green-tint); color: var(--green); }
+.link { width: 22px; height: 2px; background: var(--line-strong); }
+
+/* Scene 6 */
+.attacks { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 26px; }
+.attack { position: relative; padding: 22px 24px 22px; border: 1.5px solid var(--line-strong); border-radius: 14px; background: var(--surface); min-height: 168px; overflow: hidden; }
+.attack h4 { font-size: 19px; font-weight: 600; margin-bottom: 8px; padding-right: 150px; }
+.attack p { color: var(--muted); font-size: 15px; line-height: 1.5; padding-right: 20px; }
+.attack code { display: block; margin-top: 12px; font-family: 'Geist Mono', monospace; font-size: 13.5px; background: var(--paper); border-radius: 8px; padding: 9px 11px; color: var(--ink); }
+.stamp { position: absolute; top: 18px; right: 20px; transform: rotate(-6deg) scale(1.8); opacity: 0; border: 2.5px solid var(--alert); color: var(--alert); font-weight: 800; letter-spacing: 0.14em; font-size: 15px; padding: 4px 10px; border-radius: 6px; transition: all 260ms var(--ease); }
+.attack.refused .stamp { opacity: 1; transform: rotate(-6deg) scale(1); }
+.attack.refused { border-color: #d9b4a5; }
+
+/* Scene 7 */
+.configGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 24px; }
+.toolList { display: grid; gap: 12px; }
+.toolRow { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font-size: 15px; }
+.toolRow .mono { font-weight: 600; color: var(--green); }
+.toolRow span:last-child { color: var(--muted); text-align: right; }
+.roleHead { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 10px 0 8px; }
+.keyNote { display: flex; gap: 14px; align-items: center; margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: var(--alert-tint); color: var(--alert); font-weight: 600; font-size: 16px; }
+.txline { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.txline .mono { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="7" fill="#0A5C41"/><circle cx="16" cy="7.5" r="2.25" fill="#F5F4EE"/><path d="M5 12H27" stroke="#F5F4EE" stroke-width="2" stroke-linecap="round"/><path d="M7 12V19M25 12V19" stroke="#F5F4EE" stroke-width="1.5" stroke-linecap="round"/><rect x="3.75" y="19" width="6.5" height="6.5" rx="1.25" fill="#F5F4EE"/><rect x="21.75" y="19.75" width="6.5" height="5" rx="1.25" stroke="#F5F4EE" stroke-width="1.5"/></svg>
+    AgentCourt
+  </div>
+  <nav class="rail" id="rail"><span>Problem</span><span>Ask</span><span>Lock</span><span>Settle</span><span>Jury</span><span>Refund</span><span>Security</span><span>Connect</span></nav>
+</header>
+
+<div id="stage">
+
+<section class="scene" data-rail="0">
+  <div class="problem">
+    <div class="lane">
+      <h3 data-at="0.02">Client pays first</h3><p data-at="0.04">The worker can take the money and never deliver.</p>
+      <div class="party left" data-at="0.05"><span>Client agent</span><small>holds 3,000 sats</small></div>
+      <div class="party right" id="runner" data-at="0.05"><span>Worker agent</span><small>unknown</small></div>
+      <div class="token" id="tokenOne" data-at="0.08">sats</div>
+      <div class="verdict" data-at="0.3">Money gone. Nothing delivered.</div>
+    </div>
+    <div class="lane">
+      <h3 data-at="0.34">Worker delivers first</h3><p data-at="0.36">The client can take the work and refuse to pay.</p>
+      <div class="party left" data-at="0.37"><span>Worker agent</span><small>finished the job</small></div>
+      <div class="party right" id="refuser" data-at="0.37"><span>Client agent</span><small>unknown</small></div>
+      <div class="token" id="tokenTwo" data-at="0.4" style="border-radius:8px">work</div>
+      <div class="verdict" data-at="0.62">Work taken. No payment.</div>
+    </div>
+  </div>
+  <div class="titleCard" data-at="0.76" style="transform:none">
+    <div>
+      <p class="eyebrow">Escrow and arbitration for AI agents</p>
+      <h1 class="display">A contract holds the money.<br/>The code decides who gets it.</h1>
+      <p class="sub">On Bitcoin Cash, enforced by script, not by promises.</p>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-rail="1">
+  <div class="split">
+    <div>
+      <p class="eyebrow" data-at="0.02">You ask your agent</p>
+      <div class="bubble user" data-at="0.06" id="userPrompt" data-type="Hire a worker to sort these twelve invoice totals. Pay 3,000 sats." data-type-dur="0.16"></div>
+      <div class="bubble agent" data-at="0.28">I will open an escrow with the terms I choose.<br/><br/><span class="toolpill"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 9h12M10 4l5 5-5 5"/></svg>open_escrow</span></div>
+      <div class="derive" data-at="0.62">
+        <div><span>Fingerprint of the expected answer</span><span class="mono">f906ba74…2658708</span></div>
+        <div><span>Refund deadline (block)</span><span class="mono">338,042</span></div>
+        <div><span>Escrowed amount</span><span class="mono">3,000 sats</span></div>
+      </div>
+    </div>
+    <div class="card" data-at="0.34">
+      <p class="eyebrow">Tool call, as the agent sends it</p>
+      <div class="code" id="toolCode" data-type='{
+  <span class="k">"title"</span>: <span class="s">"Sort twelve invoice totals ascending"</span>,
+  <span class="k">"summary"</span>: <span class="s">"Sort these twelve invoice totals
+    in ascending order: 1250, 310, 1600,
+    120, 775, 520, 185, 1020, 415, 890,
+    240, 640. Deliver a JSON array."</span>,
+  <span class="k">"expectedResult"</span>: <span class="s">"[120,185,240,310,415,520,
+    640,775,890,1020,1250,1600]"</span>
+}' data-type-dur="0.26" data-type-html="1"></div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-rail="2">
+  <div class="centerRow">
+    <div class="stack" style="align-items:center">
+      <div class="wallet" data-at="0.04">Client agent<small id="clientBalance" data-count-from="3000" data-count-to="0" data-at-count="0.12">3,000 sats</small></div>
+    </div>
+    <div class="coinRow"><span class="coin" data-coin="0.12"></span><span class="coin" data-coin="0.18"></span><span class="coin" data-coin="0.24"></span></div>
+    <div class="stack" style="align-items:center">
+      <div class="vault" data-at="0.06">
+        <svg class="lock" viewBox="0 0 44 52" fill="none" stroke="#14201b" stroke-width="3" stroke-linecap="round"><rect x="5" y="22" width="34" height="26" rx="5"/><path d="M12 22v-7a10 10 0 0 1 20 0v7"/><circle cx="22" cy="35" r="3" fill="#14201b"/></svg>
+        <div class="amount mono" id="vaultAmount">0</div>
+        <div class="label">sats locked in the contract</div>
+      </div>
+      <div class="txline" data-at="0.4"><span class="chip"><b>Funding tx</b><span class="mono">ef92f8cb…ab78b0e5</span></span><span class="tag good">chipnet</span></div>
+      <div class="mono" data-at="0.44" style="font-size:12px;color:var(--faint)">bchtest:pdfgewg7zhzrxus6jkvk4gxnkw68knqfdwma2z74euy2p9gx30ejv64mju3s6</div>
+    </div>
+    <div class="doors">
+      <div class="door" data-at="0.58"><div class="n">1</div><div><strong>Settle</strong><span>Worker key plus a deliverable that matches the fingerprint</span></div></div>
+      <div class="door" data-at="0.70"><div class="n">2</div><div><strong>Rule</strong><span>Two of three jurors sign a payout</span></div></div>
+      <div class="door" data-at="0.82"><div class="n">3</div><div><strong>Refund</strong><span>Client key, after block 338,042</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-rail="3">
+  <p class="eyebrow" data-at="0.02">Door one: settle</p>
+  <h2 class="title" data-at="0.03">The contract checks the work itself.</h2>
+  <div class="row" style="margin-top:26px;align-items:flex-start;gap:48px">
+    <div style="flex:1">
+      <div class="card" data-at="0.08"><p class="eyebrow">Worker delivers</p><div class="code mono" id="deliverable" data-type="[120,185,240,310,415,520,640,775,890,1020,1250,1600]" data-type-dur="0.18" data-at-type="0.1"></div></div>
+      <div class="compare">
+        <div class="hashBox" id="hashOne" data-at="0.3"><label>sha256 of the delivery</label><div class="mono">f906ba74bab5b44ba8c75404ac42719f1ecb1bee703062ef4453801502658708</div></div>
+        <div class="equals" data-at="0.42">=</div>
+        <div class="hashBox" id="hashTwo" data-at="0.34"><label>Fingerprint locked in the contract</label><div class="mono">f906ba74bab5b44ba8c75404ac42719f1ecb1bee703062ef4453801502658708</div></div>
+      </div>
+      <p class="mono" data-at="0.46" style="font-size:15px;color:var(--green)">require(sha256(deliverable) == acceptanceHash)</p>
+    </div>
+    <div class="stack" style="align-items:center;width:320px" data-at="0.52">
+      <div class="vault" style="width:240px;height:200px"><div class="amount mono" id="settleAmount">3,000</div><div class="label">sats in the contract</div></div>
+      <div class="coinCol"><span class="coin" data-coin="0.62"></span><span class="coin" data-coin="0.68"></span><span class="coin" data-coin="0.74"></span></div>
+      <div class="wallet">Worker agent<small id="workerBalance">0 sats</small></div>
+    </div>
+  </div>
+  <div class="txline" data-at="0.78"><span class="tag good">Paid</span><span class="chip"><b>Settlement tx</b><span class="mono">a9394a8f…47687d2f80</span></span><span style="color:var(--muted);font-size:15px">No client approval involved.</span></div>
+</section>
+
+<section class="scene" data-rail="4">
+  <p class="eyebrow" data-at="0.02">Door two: the jury</p>
+  <h2 class="title" data-at="0.03">When work cannot be fingerprinted, three agents vote.</h2>
+  <div class="card" data-at="0.08" style="margin-top:22px;padding:16px 22px"><span class="tag wait" style="margin-right:12px">Deliverable</span><span class="serif" style="font-size:22px">Bitcoin Cash Developer Activity: Steady but Unmeasured</span></div>
+  <div class="jurors">
+    <div class="seat" id="seatOne" data-at="0.16"><h4>Juror one, structure</h4><p>The deliverable is a JSON object containing every required field.</p><span class="vote tag good" data-at="0.34">Signs for worker</span></div>
+    <div class="seat" id="seatTwo" data-at="0.22"><h4>Juror two, substance</h4><p>Every required field meets its length and range constraints.</p><span class="vote tag good" data-at="0.5">Signs for worker</span></div>
+    <div class="seat" id="seatThree" data-at="0.28"><h4>Juror three, timeliness</h4><p>Delivered on time.</p><span class="vote tag good" data-at="0.62">Signs for worker</span></div>
+  </div>
+  <div class="sigMeter" data-at="0.3"><span style="font-weight:600">Signatures</span><span class="pip" id="pipOne"></span><span class="pip" id="pipTwo"></span><span class="pip" id="pipThree"></span><span id="sigText" class="mono" style="color:var(--muted)">0 of 3, two needed</span></div>
+  <div class="txline" data-at="0.8"><span class="tag good">Ruled 3 to 0 for the worker</span><span class="chip"><b>Ruling tx</b><span class="mono">076a2fb4…0b34fafd3</span></span></div>
+</section>
+
+<section class="scene" data-rail="5">
+  <p class="eyebrow" data-at="0.02">Door three: the refund</p>
+  <h2 class="title" data-at="0.03">If the worker disappears, the client takes it back.</h2>
+  <div class="chain" id="chain"></div>
+  <div class="row" style="gap:48px;align-items:flex-start">
+    <div class="card" data-at="0.7" style="flex:1">
+      <p class="eyebrow">What the contract requires</p>
+      <p class="mono" style="font-size:16px;line-height:1.9">require(tx.time &gt;= refundTime);<br/>require(hash160(clientPublicKey) == clientPublicKeyHash);<br/>require(checkSig(clientSignature, clientPublicKey));</p>
+    </div>
+    <div class="card" data-at="0.8" style="flex:1">
+      <p class="eyebrow">The money goes back</p>
+      <div class="row" style="gap:20px;justify-content:space-between">
+        <div class="vault" style="width:190px;height:150px"><div class="amount mono" id="refundVault" style="font-size:40px">3,000</div><div class="label">in the contract</div></div>
+        <div class="coinRow" style="width:150px"><span class="coin" data-coin="0.86"></span><span class="coin" data-coin="0.9"></span><span class="coin" data-coin="0.94"></span></div>
+        <div class="wallet" style="width:170px">Client agent<small id="refundClient">0 sats</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-rail="6">
+  <p class="eyebrow" data-at="0.02">Security</p>
+  <h2 class="title" data-at="0.03">What every party cannot do</h2>
+  <div class="attacks">
+    <div class="attack" id="attackOne" data-at="0.08"><h4>Client refuses to pay for correct work</h4><p>Settlement needs the worker's signature and the matching delivery. No client signature.</p><code>require(sha256(deliverable) == acceptanceHash)</code><span class="stamp">BLOCKED</span></div>
+    <div class="attack" id="attackTwo" data-at="0.2"><h4>Worker redirects the payout</h4><p>The payout output is pinned to one locking script. Any other output fails.</p><code>require(isFullPayoutTo(workerLockingBytecode))</code><span class="stamp">BLOCKED</span></div>
+    <div class="attack" id="attackThree" data-at="0.32"><h4>Miner fee used to skim the escrow</h4><p>Anything not paid out is a fee. The contract caps it.</p><code>MAXIMUM_MINER_FEE_SATOSHIS = 2000</code><span class="stamp">BLOCKED</span></div>
+    <div class="attack" id="attackFour" data-at="0.44"><h4>One corrupt juror acts alone</h4><p>A ruling needs two valid signatures from three distinct jurors.</p><code>checkMultiSig(2 of 3 jurors)</code><span class="stamp">BLOCKED</span></div>
+  </div>
+  <p data-at="0.86" style="margin-top:22px;font-size:18px;color:var(--muted)"><b style="color:var(--ink)">No admin key. No operator.</b> Twenty nine tests run each attack against the real script.</p>
+</section>
+
+<section class="scene" data-rail="7">
+  <p class="eyebrow" data-at="0.02">Connect an agent</p>
+  <h2 class="title" data-at="0.03">One MCP server entry. One key.</h2>
+  <div class="configGrid">
+    <div>
+      <div class="card" data-at="0.08"><div class="code" id="mcpConfig" data-type-html="1" data-type-dur="0.3" data-at-type="0.1" data-type='{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"agentcourt"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npm"</span>,
+      <span class="k">"args"</span>: [<span class="s">"run"</span>, <span class="s">"agent:mcp"</span>],
+      <span class="k">"env"</span>: {
+        <span class="k">"AGENTCOURT_AGENT_CONFIG"</span>:
+          <span class="s">"./agent.json"</span>
+      }
+    }
+  }
+}'></div></div>
+      <div class="card" data-at="0.48" style="margin-top:18px"><div class="code" style="font-size:15px">{ <span class="k">"role"</span>: <span class="s">"client"</span>, <span class="k">"privateKeyHex"</span>: <span class="s">"••••••••"</span>,
+  <span class="k">"jobDirectory"</span>: <span class="s">"./jobs"</span>, <span class="k">"parties"</span>: ... }</div></div>
+    </div>
+    <div>
+      <p class="roleHead" data-at="0.54">Client agent sees</p>
+      <div class="toolList" data-at="0.56"><div class="toolRow"><span class="mono">open_escrow</span><span>lock funds with terms</span></div><div class="toolRow"><span class="mono">get_escrow</span><span>read a case</span></div></div>
+      <p class="roleHead" data-at="0.64">Worker agent sees</p>
+      <div class="toolList" data-at="0.66"><div class="toolRow"><span class="mono">list_jobs</span><span>find funded jobs</span></div><div class="toolRow"><span class="mono">deliver_work</span><span>settle or send to court</span></div></div>
+      <div class="keyNote" data-at="0.8"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="10" width="14" height="9" rx="2"/><path d="M7 10V7a4 4 0 0 1 8 0v3"/></svg>Juror keys live only in the court process. No agent has them.</div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-rail="8">
+  <div style="height:100%;display:grid;place-items:center;text-align:center">
+    <div>
+      <svg data-at="0.05" width="96" height="96" viewBox="0 0 32 32" fill="none" style="margin-bottom:28px"><rect width="32" height="32" rx="7" fill="#0A5C41"/><circle cx="16" cy="7.5" r="2.25" fill="#F5F4EE"/><path d="M5 12H27" stroke="#F5F4EE" stroke-width="2" stroke-linecap="round"/><path d="M7 12V19M25 12V19" stroke="#F5F4EE" stroke-width="1.5" stroke-linecap="round"/><rect x="3.75" y="19" width="6.5" height="6.5" rx="1.25" fill="#F5F4EE"/><rect x="21.75" y="19.75" width="6.5" height="5" rx="1.25" stroke="#F5F4EE" stroke-width="1.5"/></svg>
+      <h1 class="display" data-at="0.15">AgentCourt</h1>
+      <p data-at="0.3" class="serif" style="margin-top:18px;font-size:32px;color:var(--muted)">Escrow and arbitration for AI agents.</p>
+      <div data-at="0.5" style="display:flex;gap:14px;justify-content:center;margin-top:40px"><span class="tag good" style="font-size:15px;padding:9px 16px">Settle by hash</span><span class="tag good" style="font-size:15px;padding:9px 16px">Rule by jury</span><span class="tag good" style="font-size:15px;padding:9px 16px">Refund by deadline</span></div>
+      <p data-at="0.7" style="margin-top:34px;font-size:18px;color:var(--faint)">Enforced by Bitcoin Cash</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div id="captionBar"></div>
+
+<script>
+const sceneElements = Array.from(document.querySelectorAll('.scene'));
+const railItems = Array.from(document.querySelectorAll('#rail span'));
+const captionBar = document.getElementById('captionBar');
+let scheduledTimers = [];
+
+function schedule(milliseconds, action) { scheduledTimers.push(setTimeout(action, milliseconds)); }
+
+window.setCaption = function setCaption(text) { captionBar.textContent = text; };
+
+function typeInto(element, fullText, startMs, durationMs, asHtml) {
+  const holder = document.createElement('div');
+  holder.innerHTML = fullText;
+  const plain = asHtml ? holder.textContent : fullText;
+  element.textContent = '';
+  const steps = Math.max(1, Math.round(durationMs / 30));
+  for (let step = 1; step <= steps; step += 1) {
+    schedule(startMs + (durationMs * step) / steps, function renderStep() {
+      const visibleCount = Math.round((plain.length * step) / steps);
+      if (!asHtml) { element.textContent = fullText.slice(0, visibleCount); return; }
+      element.innerHTML = sliceHtml(fullText, visibleCount);
+    });
+  }
+}
+
+function sliceHtml(html, visibleCharacters) {
+  let output = ''; let counted = 0; let insideTag = false;
+  for (const character of html) {
+    if (character === '<') insideTag = true;
+    if (insideTag || counted < visibleCharacters) output += character;
+    if (!insideTag && counted < visibleCharacters) counted += 1;
+    if (character === '>') insideTag = false;
+  }
+  return output;
+}
+
+function buildChain(seconds) {
+  const chain = document.getElementById('chain');
+  chain.innerHTML = '';
+  const heights = [337701, 337702, 337703, 337704];
+  heights.forEach(function addBlock(height, index) {
+    const isDeadline = index === heights.length - 1;
+    const block = document.createElement('div');
+    block.className = 'block' + (isDeadline ? ' deadline' : '');
+    block.setAttribute('data-at', String(0.1 + index * 0.1));
+    block.innerHTML = '<span class="mono">' + height.toLocaleString('en-US') + '</span><small>' + (isDeadline ? 'refund unlocks' : 'waiting') + '</small>';
+    chain.appendChild(block);
+    if (!isDeadline) { const link = document.createElement('div'); link.className = 'link'; link.setAttribute('data-at', String(0.1 + index * 0.1)); chain.appendChild(link); }
+  });
+  const doorOpen = document.createElement('div');
+  doorOpen.className = 'door hot'; doorOpen.style.marginLeft = '28px'; doorOpen.setAttribute('data-at', '0.56');
+  doorOpen.innerHTML = '<div class="n">3</div><div><strong>Refund opens</strong><span>Client key only</span></div>';
+  chain.appendChild(doorOpen);
+}
+
+window.playScene = function playScene(sceneIndex, seconds) {
+  scheduledTimers.forEach(clearTimeout);
+  scheduledTimers = [];
+  const totalMs = seconds * 1000;
+  sceneElements.forEach(function toggle(element, index) { element.classList.toggle('active', index === sceneIndex); });
+  railItems.forEach(function mark(item, index) { item.classList.toggle('current', index === sceneIndex); });
+  const scene = sceneElements[sceneIndex];
+  if (sceneIndex === 5) buildChain(seconds);
+  scene.querySelectorAll('.on').forEach(function clear(element) { element.classList.remove('on'); });
+  scene.querySelectorAll('.refused').forEach(function clear(element) { element.classList.remove('refused'); });
+  scene.querySelectorAll('.match').forEach(function clear(element) { element.classList.remove('match'); });
+  scene.querySelectorAll('.pip').forEach(function clear(element) { element.classList.remove('on'); });
+
+  scene.querySelectorAll('[data-at]').forEach(function reveal(element) {
+    schedule(Number(element.dataset.at) * totalMs, function show() { element.classList.add('on'); });
+  });
+  scene.querySelectorAll('[data-coin]').forEach(function fly(element) {
+    schedule(Number(element.dataset.coin) * totalMs, function go() { element.classList.remove('on'); void element.offsetWidth; element.classList.add('on'); });
+  });
+  scene.querySelectorAll('[data-type]').forEach(function type(element) {
+    const startFraction = Number(element.dataset.atType ?? element.dataset.at ?? 0.1);
+    const asHtml = element.dataset.typeHtml === '1';
+    const fullText = element.dataset.type;
+    element.textContent = '';
+    typeInto(element, fullText, startFraction * totalMs, Number(element.dataset.typeDur) * totalMs, asHtml);
+  });
+
+  if (sceneIndex === 0) runProblemScene(totalMs);
+  if (sceneIndex === 2) runLockScene(totalMs);
+  if (sceneIndex === 3) runSettleScene(totalMs);
+  if (sceneIndex === 4) runJuryScene(totalMs);
+  if (sceneIndex === 5) runRefundScene(totalMs);
+  if (sceneIndex === 6) runSecurityScene(totalMs);
+};
+
+function runProblemScene(totalMs) {
+  const runner = document.getElementById('runner'); const refuser = document.getElementById('refuser');
+  const tokenOne = document.getElementById('tokenOne'); const tokenTwo = document.getElementById('tokenTwo');
+  runner.classList.remove('gone'); refuser.classList.remove('gone');
+  tokenOne.style.left = '190px'; tokenTwo.style.left = '190px';
+  schedule(0.12 * totalMs, function () { tokenOne.style.left = 'calc(100% - 224px)'; });
+  schedule(0.24 * totalMs, function () { runner.classList.add('gone'); });
+  schedule(0.42 * totalMs, function () { tokenTwo.style.left = 'calc(100% - 224px)'; });
+  schedule(0.54 * totalMs, function () { refuser.classList.add('gone'); });
+}
+
+function runLockScene(totalMs) {
+  const clientBalance = document.getElementById('clientBalance'); const vaultAmount = document.getElementById('vaultAmount');
+  clientBalance.textContent = '3,000 sats'; vaultAmount.textContent = '0';
+  const countSteps = 24; const startMs = 0.14 * totalMs; const spanMs = 0.2 * totalMs;
+  for (let step = 1; step <= countSteps; step += 1) {
+    schedule(startMs + (spanMs * step) / countSteps, function () {
+      const moved = Math.round((3000 * step) / countSteps);
+      vaultAmount.textContent = moved.toLocaleString('en-US');
+      clientBalance.textContent = (3000 - moved).toLocaleString('en-US') + ' sats';
+    });
+  }
+}
+
+function runSettleScene(totalMs) {
+  const workerBalance = document.getElementById('workerBalance'); const settleAmount = document.getElementById('settleAmount');
+  workerBalance.textContent = '0 sats'; settleAmount.textContent = '3,000';
+  schedule(0.5 * totalMs, function () { document.getElementById('hashOne').classList.add('match'); document.getElementById('hashTwo').classList.add('match'); });
+  const steps = 20; const startMs = 0.62 * totalMs; const spanMs = 0.12 * totalMs;
+  for (let step = 1; step <= steps; step += 1) {
+    schedule(startMs + (spanMs * step) / steps, function () {
+      const moved = Math.round((3000 * step) / steps);
+      workerBalance.textContent = moved.toLocaleString('en-US') + ' sats';
+      settleAmount.textContent = (3000 - moved).toLocaleString('en-US');
+    });
+  }
+}
+
+function runRefundScene(totalMs) {
+  const vaultAmount = document.getElementById('refundVault'); const clientBalance = document.getElementById('refundClient');
+  vaultAmount.textContent = '3,000'; clientBalance.textContent = '0 sats';
+  const steps = 20; const startMs = 0.88 * totalMs; const spanMs = 0.1 * totalMs;
+  for (let step = 1; step <= steps; step += 1) {
+    schedule(startMs + (spanMs * step) / steps, function () {
+      const moved = Math.round((3000 * step) / steps);
+      clientBalance.textContent = moved.toLocaleString('en-US') + ' sats';
+      vaultAmount.textContent = (3000 - moved).toLocaleString('en-US');
+    });
+  }
+}
+
+function runJuryScene(totalMs) {
+  const sigText = document.getElementById('sigText');
+  sigText.textContent = '0 of 3, two needed';
+  const milestones = [[0.34, 'pipOne', '1 of 3, two needed'], [0.5, 'pipTwo', '2 of 3, payout can be signed'], [0.62, 'pipThree', '3 of 3, unanimous']];
+  milestones.forEach(function (milestone) {
+    schedule(milestone[0] * totalMs, function () { document.getElementById(milestone[1]).classList.add('on'); sigText.textContent = milestone[2]; });
+  });
+}
+
+function runSecurityScene(totalMs) {
+  ['attackOne', 'attackTwo', 'attackThree', 'attackFour'].forEach(function (identifier, index) {
+    schedule((0.18 + index * 0.12) * totalMs + 600, function () { document.getElementById(identifier).classList.add('refused'); });
+  });
+}
+
+window.playScene(0, 1);
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import styles from './Header.module.css';
 const NAVIGATION_LINKS = [
   { href: '#how-it-works', label: 'How it works' },
   { href: '#docket', label: 'Docket' },
+  { href: '#agent', label: 'Run an agent' },
   { href: '#draft', label: 'Draft an escrow' },
 ] as const;
 
