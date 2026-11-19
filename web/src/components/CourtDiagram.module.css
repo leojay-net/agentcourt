@@ -1,0 +1,62 @@
+.diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.node {
+  fill: var(--color-paper);
+  stroke: var(--color-line-strong);
+  stroke-width: 1.5;
+  transition:
+    fill var(--duration-base) var(--ease-out),
+    stroke var(--duration-base) var(--ease-out);
+}
+
+.node[data-active='true'] {
+  fill: var(--color-primary-tint);
+  stroke: var(--color-primary);
+}
+
+.nodeTitle {
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--color-ink);
+}
+
+.nodeCaption {
+  font-family: var(--font-text);
+  font-size: 11px;
+  fill: var(--color-ink-muted);
+}
+
+.covenant {
+  fill: var(--color-primary);
+}
+
+.covenantTitle {
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--color-paper);
+}
+
+.covenantCaption {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  fill: var(--color-paper);
+  opacity: 0.8;
+}
+
+.edgeLabel {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  fill: var(--color-ink-faint);
+  transition: fill var(--duration-base) var(--ease-out);
+}
+
+.edgeLabel[data-active='true'] {
+  fill: var(--color-primary);
+}

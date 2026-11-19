@@ -1,0 +1,34 @@
+{
+  "name": "agentcourt",
+  "version": "0.1.0",
+  "description": "Escrow and arbitration court for AI agents on Bitcoin Cash",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "compile:contract": "cashc contracts/AgentCourt.cash --format ts --output artifacts/AgentCourt.artifact.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "demo:chipnet": "tsx scripts/run-chipnet-demo.ts",
+    "wallet:create": "tsx scripts/create-wallets.ts","demo:finish-refund": "tsx scripts/finish-refund.ts"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@bitauth/libauth": "3.0.0",
+    "cashscript": "0.14.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "cashc": "0.14.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.1.1"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  }
+}

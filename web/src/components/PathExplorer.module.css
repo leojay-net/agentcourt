@@ -1,0 +1,113 @@
+.section {
+  padding-block: var(--space-8);
+  border-top: var(--border);
+}
+
+.title {
+  margin-top: var(--space-2);
+  font-size: var(--text-2xl);
+}
+
+.explorer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: var(--space-7);
+  margin-top: var(--space-6);
+  align-items: start;
+}
+
+.tabs {
+  position: relative;
+  display: inline-flex;
+  padding: 0.25rem;
+  background: color-mix(in srgb, var(--color-ink) 7%, transparent);
+  border-radius: var(--radius-md);
+}
+
+.tab {
+  position: relative;
+  min-width: 5.5rem;
+  min-height: 2.5rem;
+  padding: 0 var(--space-4);
+  background: transparent;
+  border: 0;
+  border-radius: calc(var(--radius-md) - 3px);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.tab[aria-selected='true'] {
+  color: var(--color-ink);
+}
+
+.tabIndicator {
+  position: absolute;
+  inset: 0;
+  background: var(--color-surface);
+  border-radius: calc(var(--radius-md) - 3px);
+  box-shadow: 0 1px 2px rgb(20 32 27 / 0.12);
+}
+
+.tabLabel {
+  position: relative;
+}
+
+.panel {
+  margin-top: var(--space-5);
+  min-height: 21rem;
+}
+
+.panelHeadline {
+  font-size: var(--text-xl);
+}
+
+.panelSummary {
+  margin-top: var(--space-3);
+  color: var(--color-ink-muted);
+}
+
+.conditions {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.conditions li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.conditions svg {
+  margin-top: 0.1rem;
+  color: var(--color-primary);
+}
+
+.diagram {
+  position: sticky;
+  top: 6rem;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 60rem) {
+  .explorer {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .diagram {
+    position: static;
+  }
+
+  .panel {
+    min-height: 0;
+  }
+}

@@ -1,0 +1,71 @@
+pragma cashscript ^0.14.0;
+
+// Largest miner fee, in satoshis, a spend of this escrow may pay. Anything the
+// spender does not send to the payout output is a fee, so this cap stops a
+// co-signer from skimming the escrow through an inflated fee.
+int constant MAXIMUM_MINER_FEE_SATOSHIS = 2000;
+
+// One escrow between a client agent and a worker agent, arbitrated by a
+// three-member jury. The contract address is a pure function of these terms,
+// so no registry or indexer is needed to find a task.
+contract AgentCourt(
+    bytes20 clientPublicKeyHash,
+    bytes20 workerPublicKeyHash,
+    pubkey firstJurorPublicKey,
+    pubkey secondJurorPublicKey,
+    pubkey thirdJurorPublicKey,
+    bytes32 acceptanceHash,
+    int refundTime
+) {
+    // Programmatic acceptance. The worker reveals a deliverable whose SHA-256
+    // equals the hash the client committed to when funding. No client approval
+    // is required, so a correct result cannot be held hostage.
+    function settle(pubkey workerPublicKey, sig workerSignature, bytes deliverable) {
+        require(hash160(workerPublicKey) == workerPublicKeyHash);
+        require(checkSig(workerSignature, workerPublicKey));
+        require(sha256(deliverable) == acceptanceHash);
+
+        bytes25 workerLockingBytecode = new LockingBytecodeP2PKH(workerPublicKeyHash);
+        require(isFullPayoutTo(workerLockingBytecode));
+    }
+
+    // Timeout refund. If nothing settled before the deadline the client
+    // reclaims the escrow.
+    function refund(pubkey clientPublicKey, sig clientSignature) {
+        require(tx.time >= refundTime);
+        require(hash160(clientPublicKey) == clientPublicKeyHash);
+        require(checkSig(clientSignature, clientPublicKey));
+
+        bytes25 clientLockingBytecode = new LockingBytecodeP2PKH(clientPublicKeyHash);
+        require(isFullPayoutTo(clientLockingBytecode));
+    }
+
+    // Jury ruling for work that cannot be reduced to a hash. Two of the three
+    // jurors sign a transaction that pays either the worker or the client. A
+    // signature commits to the transaction outputs, so the signature is the vote.
+    function rule(sig firstSignature, sig secondSignature) {
+        require(checkMultiSig(
+            [firstSignature, secondSignature],
+            [firstJurorPublicKey, secondJurorPublicKey, thirdJurorPublicKey]
+        ));
+
+        bytes25 clientLockingBytecode = new LockingBytecodeP2PKH(clientPublicKeyHash);
+        bytes25 workerLockingBytecode = new LockingBytecodeP2PKH(workerPublicKeyHash);
+        bytes payoutLockingBytecode = tx.outputs[0].lockingBytecode;
+        require(payoutLockingBytecode == clientLockingBytecode || payoutLockingBytecode == workerLockingBytecode);
+        require(isFullPayoutTo(payoutLockingBytecode));
+    }
+}
+
+// True when the escrow, including any CashToken balance, leaves in a single
+// output to the named recipient, minus at most the capped miner fee.
+function isFullPayoutTo(bytes recipientLockingBytecode) returns (bool) {
+    int escrowIndex = this.activeInputIndex;
+    bool isSingleOutput = tx.outputs.length == 1;
+    bool paysRecipient = tx.outputs[0].lockingBytecode == recipientLockingBytecode;
+    bool keepsValue = tx.outputs[0].value >= tx.inputs[escrowIndex].value - MAXIMUM_MINER_FEE_SATOSHIS;
+    bool keepsTokenCategory = tx.outputs[0].tokenCategory == tx.inputs[escrowIndex].tokenCategory;
+    bool keepsTokenAmount = tx.outputs[0].tokenAmount == tx.inputs[escrowIndex].tokenAmount;
+    bool keepsNftCommitment = tx.outputs[0].nftCommitment == tx.inputs[escrowIndex].nftCommitment;
+    return isSingleOutput && paysRecipient && keepsValue && keepsTokenCategory && keepsTokenAmount && keepsNftCommitment;
+}
