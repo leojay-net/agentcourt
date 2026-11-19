@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const fieldRequirementSchema = z.object({
+export const fieldRequirementSchema = z.object({
   fieldName: z.string(),
   kind: z.enum(['string', 'number', 'array']),
   minimumLength: z.number().optional(),
@@ -14,7 +14,7 @@ const findingSchema = z.object({
   detail: z.string(),
 });
 
-const verdictSchema = z.object({
+export const verdictSchema = z.object({
   jurorLabel: z.string(),
   jurorPublicKeyHex: z.string(),
   favoredParty: z.enum(['worker', 'client']),

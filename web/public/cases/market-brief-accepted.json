@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "caseId": "market-brief-accepted",
+  "title": "Write a sourced market brief",
+  "scenarioKind": "jury-for-worker",
+  "network": "chipnet",
+  "specification": {
+    "summary": "Deliver a JSON brief with a headline, a body of at least 120 characters, at least two cited sources, and a confidence score between 0 and 1. The result cannot be reduced to a hash, so a jury decides.",
+    "requiredFields": [
+      {
+        "fieldName": "headline",
+        "kind": "string",
+        "minimumLength": 12
+      },
+      {
+        "fieldName": "body",
+        "kind": "string",
+        "minimumLength": 120
+      },
+      {
+        "fieldName": "sources",
+        "kind": "array",
+        "minimumLength": 2
+      },
+      {
+        "fieldName": "confidence",
+        "kind": "number",
+        "minimumValue": 0,
+        "maximumValue": 1
+      }
+    ]
+  },
+  "terms": {
+    "clientPublicKeyHashHex": "6c3c3200da09e9c9db59e3b9577e1e733795b494",
+    "workerPublicKeyHashHex": "9ce1fb1268c4add738a9d270e579ac45f40e7431",
+    "jurorPublicKeysHex": [
+      "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+      "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+      "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101"
+    ],
+    "acceptanceHashHex": "2274ba5ffe316666235371e6c3d4a47ef7a6ef5d1dc43b1051a66dd1061ef3cc",
+    "refundBlockHeight": 337846
+  },
+  "contractAddress": "bchtest:pvwp8wu3nec3hjha0s2gppndzh06kl9z0e9x2tw5jfelp0fualndg6lfup0h5",
+  "clientAddress": "bchtest:qpkrcvsqmgy7njwmt83mj4m7reen09d5jsvynlpsga",
+  "workerAddress": "bchtest:qzwwr7cjdrz2m4ec48f8pete43zlgrn5xyzx4xhqp5",
+  "escrowSatoshis": 3000,
+  "deliverableText": "{\"headline\":\"Bitcoin Cash fees stay below one cent through the week\",\"body\":\"Median transaction fees on Bitcoin Cash held under one US cent for the full seven-day window while daily transaction counts rose, which suggests spare block capacity rather than fee pressure. Mempool depth never exceeded two blocks.\",\"sources\":[\"https://explorer.example/fees\",\"https://explorer.example/mempool\"],\"confidence\":0.82}",
+  "status": "ruled-for-worker",
+  "verdicts": [
+    {
+      "jurorLabel": "jurorOne",
+      "jurorPublicKeyHex": "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+      "favoredParty": "worker",
+      "findings": [
+        {
+          "checkName": "deliverable is a JSON object",
+          "passed": true,
+          "detail": "parsed"
+        },
+        {
+          "checkName": "field \"headline\" present",
+          "passed": true,
+          "detail": "present"
+        },
+        {
+          "checkName": "field \"body\" present",
+          "passed": true,
+          "detail": "present"
+        },
+        {
+          "checkName": "field \"sources\" present",
+          "passed": true,
+          "detail": "present"
+        },
+        {
+          "checkName": "field \"confidence\" present",
+          "passed": true,
+          "detail": "present"
+        }
+      ],
+      "reasoning": "The deliverable is a JSON object containing every required field."
+    },
+    {
+      "jurorLabel": "jurorTwo",
+      "jurorPublicKeyHex": "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+      "favoredParty": "worker",
+      "findings": [
+        {
+          "checkName": "field \"headline\" satisfies its constraints",
+          "passed": true,
+          "detail": "54 characters"
+        },
+        {
+          "checkName": "field \"body\" satisfies its constraints",
+          "passed": true,
+          "detail": "232 characters"
+        },
+        {
+          "checkName": "field \"sources\" satisfies its constraints",
+          "passed": true,
+          "detail": "2 items"
+        },
+        {
+          "checkName": "field \"confidence\" satisfies its constraints",
+          "passed": true,
+          "detail": "0.82 is inside the accepted range"
+        }
+      ],
+      "reasoning": "Every required field meets its length and range constraints."
+    },
+    {
+      "jurorLabel": "jurorThree",
+      "jurorPublicKeyHex": "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101",
+      "favoredParty": "worker",
+      "findings": [
+        {
+          "checkName": "deliverable was presented",
+          "passed": true,
+          "detail": "presented"
+        },
+        {
+          "checkName": "delivered before the deadline",
+          "passed": true,
+          "detail": "block 337702 is at or before 337846"
+        }
+      ],
+      "reasoning": "Delivered on time."
+    }
+  ],
+  "transactions": [
+    {
+      "kind": "funding",
+      "label": "Client funds the escrow",
+      "transactionId": "90d8e7875ad1a0596030929a0bdd35fb2fa5cf9d2070d44411ae017ce8b88201"
+    },
+    {
+      "kind": "ruling",
+      "label": "Two jurors sign the payout transaction",
+      "transactionId": "45f232b23573601e719725611af92b73b86f0ecab014b9a455d5a0463c437235"
+    }
+  ]
+}

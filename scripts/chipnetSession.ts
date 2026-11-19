@@ -16,8 +16,10 @@ export interface ChipnetSession {
 
 export async function openChipnetSession(): Promise<ChipnetSession> {
   const roster = parseRosterFile(readFileSync(ROSTER_FILE_PATH, 'utf-8'), 'chipnet');
+  const electrumHostname = process.env.CHIPNET_ELECTRUM_HOSTNAME;
   const provider = new ElectrumNetworkProvider(Network.CHIPNET, {
     manualConnectionManagement: true,
+    ...(electrumHostname ? { hostname: electrumHostname } : {}),
   });
   await provider.connect();
   return { provider, roster };

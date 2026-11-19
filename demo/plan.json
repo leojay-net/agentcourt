@@ -1,0 +1,161 @@
+{
+  "url": "http://localhost:5173/",
+  "timings": "voiceover_segments/timings.json",
+  "segments": [
+    {
+      "section": "#top"
+    },
+    {
+      "goto": "file:///Users/mac/Desktop/CODE/hackathons/projects/agentcourt/demo/replay.html"
+    },
+    {
+      "actions": [
+        {
+          "evaluate": "reveal(1)"
+        },
+        {
+          "wait": 5000
+        },
+        {
+          "evaluate": "reveal(2)"
+        },
+        {
+          "wait": 5000
+        },
+        {
+          "evaluate": "reveal(3)"
+        },
+        {
+          "wait": 4000
+        },
+        {
+          "evaluate": "reveal(4)"
+        },
+        {
+          "wait": 4000
+        },
+        {
+          "evaluate": "reveal(5)"
+        },
+        {
+          "wait": 3500
+        },
+        {
+          "evaluate": "reveal(6)"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "wait": 800
+        },
+        {
+          "evaluate": "reveal(7)"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "evaluate": "reveal(8)"
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "evaluate": "reveal(9)"
+        },
+        {
+          "wait": 2000
+        },
+        {
+          "evaluate": "reveal(11)"
+        },
+        {
+          "wait": 3000
+        },
+        {
+          "evaluate": "reveal(12)"
+        },
+        {
+          "wait": 3000
+        },
+        {
+          "evaluate": "reveal(13)"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "evaluate": "reveal(14)"
+        },
+        {
+          "wait": 3000
+        },
+        {
+          "evaluate": "reveal(15)"
+        },
+        {
+          "wait": 3500
+        },
+        {
+          "evaluate": "reveal(16)"
+        },
+        {
+          "wait": 2500
+        },
+        {
+          "evaluate": "reveal(17)"
+        }
+      ]
+    },
+    {
+      "goto": "http://localhost:5173/",
+      "section": "#docket",
+      "actions": [
+        {
+          "click": "ul[aria-label=Cases] li:nth-child(6) button"
+        },
+        {
+          "scrollBy": 430
+        },
+        {
+          "wait": 2800
+        },
+        {
+          "scrollBy": -430
+        },
+        {
+          "wait": 500
+        },
+        {
+          "click": "ul[aria-label=Cases] li:nth-child(4) button"
+        },
+        {
+          "scrollBy": 430
+        }
+      ]
+    },
+    {
+      "section": "#how-it-works",
+      "actions": [
+        {
+          "click": "[role=tab]:has-text('Refund')"
+        }
+      ]
+    },
+    {
+      "section": "#draft",
+      "actions": [
+        {
+          "wait": 2500
+        },
+        {
+          "click": "button:has-text('Use the demo agents')"
+        }
+      ]
+    }
+  ]
+}

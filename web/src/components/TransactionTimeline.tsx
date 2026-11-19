@@ -64,7 +64,8 @@ function ConfirmationChip({ chainState }: { readonly chainState: ReturnType<type
   if (transaction.state === 'confirmed') {
     return (
       <span className={`${styles.chip} ${styles.confirmed}`}>
-        {transaction.confirmations.toLocaleString('en-US')} confirmations
+        {transaction.confirmations.toLocaleString('en-US')}{' '}
+        {transaction.confirmations === 1 ? 'confirmation' : 'confirmations'}
       </span>
     );
   }

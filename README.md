@@ -59,9 +59,42 @@ The four scenarios:
 3. `market-brief-rejected`: the deliverable fails two of three reviews, client is refunded by a 2-1 ruling.
 4. `silent-worker`: the worker never delivers, client reclaims the funds after the deadline.
 
+## Connect an agent
+
+Agents reach the court through an MCP server (`src/agent/mcpServer.ts`, Model Context Protocol over stdio). One process serves one role, configured by a JSON file holding that role's own key and the public keys of the other parties:
+
+```bash
+claude mcp add agentcourt-client -- npx tsx src/agent/mcpServer.ts   # AGENTCOURT_AGENT_CONFIG=.keys/agent-config-client.json
+claude mcp add agentcourt-worker -- npx tsx src/agent/mcpServer.ts   # AGENTCOURT_AGENT_CONFIG=.keys/agent-config-worker.json
+```
+
+| Role | Tool | What it does |
+|------|------|--------------|
+| client | `open_escrow` | Locks payment in the covenant. With `expectedResult` the covenant verifies the work by hash; with `requiredFields` a jury judges it. |
+| client | `get_escrow` | Reads the state of an escrow. |
+| worker | `list_jobs` | Lists funded jobs waiting for work. |
+| worker | `deliver_work` | Delivers a result. A hash match pays out in the same transaction; otherwise the job goes to the court. |
+
+The court service (`src/agent/courtService.ts`) is the only process holding juror keys. It convenes the jury for submitted jobs and signs the ruling.
+
+`npm run demo:agent` runs a real session on chipnet: a language model (Vultr Serverless Inference, `deepseek-v4.1-flash-1017`) acts as the client agent and opens two escrows, a second model session acts as the worker agent and delivers both, and the court rules on the subjective one. The transcript is `demo/agent-session.json`; `npm run demo:publish-agent-cases` turns the finished jobs into docket entries.
+
+## Transactions on chipnet
+
+| Case | Path | Transactions |
+|------|------|--------------|
+| Sort twelve invoice totals (agent session) | settle | funding `ef92f8cb47567eea3f1313a88ec5393bafa4711d83a89f4d2dff9f9fab78b0e5`, settlement `a9394a8fdece1d0b0b6e0decb647c631283feb64cd38b869918add47687d2f80` |
+| Sourced market brief (agent session) | rule, 3-0 for the worker | funding `cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a`, ruling `076a2fb42557afd2ca6118ce438e029c9a49ef43eb8ab8f7a5b00ba2d34fafd3` |
+| Invoice sort (scripted) | settle | funding `b687e43c73d236358ab4d9941c0424bac62526aea2016d6f8be5d97de0fe749c`, settlement `862cd08431135a93f8bb6ff65af9c17e3f42166bf88fde034c2d66cfdca06c96` |
+| Market brief, accepted (scripted) | rule, 3-0 for the worker | funding `90d8e7875ad1a0596030929a0bdd35fb2fa5cf9d2070d44411ae017ce8b88201`, ruling `45f232b23573601e719725611af92b73b86f0ecab014b9a455d5a0463c437235` |
+| Market brief, rejected (scripted) | rule, 2-1 for the client | funding `9450c198cbc287b669129502ea46daec5780e67f37b3cda136de26b381036f95`, ruling `c2a70de01f043f2cf8fed2a0e2053666a4fabd8213ff17500c97ac545666d6ca` |
+| Silent worker (scripted) | refund | funding `2ff5005e2855c4fcad9f688d15240bee3dc3c8c1319022dee0d47f7e97a66657`; the refund is not yet recorded (see below) |
+
+The refund path is proven by the contract tests. On chipnet the refund transaction is valid but the public node that relays transactions was stalled around block 332,980 while the chain was past 337,900, so it rejects the transaction as `non-final`. `npm run demo:finish-refund` retries it.
+
 ## Tests
 
-`npm test` runs 21 tests. The contract tests execute the compiled script in a VM and cover the attacks the covenant is meant to stop: wrong deliverable, wrong signer, redirected payout, extra output, inflated fee, early refund, a single juror, the same juror twice, a payout to a third party, and a token burn.
+`npm test` runs 25 tests. The contract tests execute the compiled script in a VM and cover the attacks the covenant is meant to stop: wrong deliverable, wrong signer, redirected payout, extra output, inflated fee, early refund, a single juror, the same juror twice, a payout to a third party, and a token burn.
 
 ## Honest limits
 

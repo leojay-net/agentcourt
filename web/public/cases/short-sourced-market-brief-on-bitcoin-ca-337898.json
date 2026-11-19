@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "caseId": "short-sourced-market-brief-on-bitcoin-ca-337898",
+  "title": "Short sourced market brief on Bitcoin Cash developer activity",
+  "scenarioKind": "jury-for-worker",
+  "network": "chipnet",
+  "specification": {
+    "summary": "Deliver a short sourced market brief on Bitcoin Cash developer activity as a JSON object. The deliverable must stay under 600 bytes total. It must contain: headline (string, at least 12 characters), body (string, at least 120 characters), sources (array, at least 2 items), and confidence (number from 0 to 1).",
+    "requiredFields": [
+      {
+        "fieldName": "headline",
+        "kind": "string",
+        "minimumLength": 12
+      },
+      {
+        "fieldName": "body",
+        "kind": "string",
+        "minimumLength": 120
+      },
+      {
+        "fieldName": "sources",
+        "kind": "array",
+        "minimumLength": 2
+      },
+      {
+        "fieldName": "confidence",
+        "kind": "number",
+        "minimumValue": 0,
+        "maximumValue": 1
+      }
+    ]
+  },
+  "terms": {
+    "clientPublicKeyHashHex": "6c3c3200da09e9c9db59e3b9577e1e733795b494",
+    "workerPublicKeyHashHex": "9ce1fb1268c4add738a9d270e579ac45f40e7431",
+    "jurorPublicKeysHex": [
+      "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+      "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+      "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101"
+    ],
+    "acceptanceHashHex": "6391556602c3892bcba056c51aae4d19faa864b2cec2e579feece99eba604736",
+    "refundBlockHeight": 338042
+  },
+  "contractAddress": "bchtest:pdrw34p2j2rutlg58mrcg000w32asppr7ncfdawrlqq5m3w65cz97t9855gw4",
+  "clientAddress": "bchtest:qpkrcvsqmgy7njwmt83mj4m7reen09d5jsvynlpsga",
+  "workerAddress": "bchtest:qzwwr7cjdrz2m4ec48f8pete43zlgrn5xyzx4xhqp5",
+  "escrowSatoshis": 3000,
+  "deliverableText": "{\"headline\":\"Bitcoin Cash Developer Activity: Steady but Unmeasured\",\"body\":\"Public repos such as Bitcoin Cash Node and BCH Research remain the main venues for protocol work, with CashTokens and adaptive block-size discussion driving recent effort. This brief was written without live repository metrics, so commit and contributor counts are not quantified here.\",\"sources\":[\"github.com/bitcoin-cash-node/bitcoin-cash-node\",\"bitcoincashresearch.org\"],\"confidence\":0.3}",
+  "status": "ruled-for-worker",
+  "verdicts": [
+    {
+      "jurorLabel": "jurorOne",
+      "jurorPublicKeyHex": "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+      "favoredParty": "worker",
+      "findings": [
+        {
+          "checkName": "deliverable is a JSON object",
+          "passed": true,
+          "detail": "parsed"
+        },
+        {
+          "checkName": "field \"headline\" present",
+          "passed": true,
+          "detail": "present"
+        },
+        {
+          "checkName": "field \"body\" present",
+          "passed": true,
+          "detail": "present"
+        },
+        {
+          "checkName": "field \"sources\" present",
+          "passed": true,
+          "detail": "present"
+        },
+        {
+          "checkName": "field \"confidence\" present",
+          "passed": true,
+          "detail": "present"
+        }
+      ],
+      "reasoning": "The deliverable is a JSON object containing every required field."
+    },
+    {
+      "jurorLabel": "jurorTwo",
+      "jurorPublicKeyHex": "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+      "favoredParty": "worker",
+      "findings": [
+        {
+          "checkName": "field \"headline\" satisfies its constraints",
+          "passed": true,
+          "detail": "54 characters"
+        },
+        {
+          "checkName": "field \"body\" satisfies its constraints",
+          "passed": true,
+          "detail": "285 characters"
+        },
+        {
+          "checkName": "field \"sources\" satisfies its constraints",
+          "passed": true,
+          "detail": "2 items"
+        },
+        {
+          "checkName": "field \"confidence\" satisfies its constraints",
+          "passed": true,
+          "detail": "0.3 is inside the accepted range"
+        }
+      ],
+      "reasoning": "Every required field meets its length and range constraints."
+    },
+    {
+      "jurorLabel": "jurorThree",
+      "jurorPublicKeyHex": "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101",
+      "favoredParty": "worker",
+      "findings": [
+        {
+          "checkName": "deliverable was presented",
+          "passed": true,
+          "detail": "presented"
+        },
+        {
+          "checkName": "delivered before the deadline",
+          "passed": true,
+          "detail": "block 337898 is at or before 338042"
+        }
+      ],
+      "reasoning": "Delivered on time."
+    }
+  ],
+  "transactions": [
+    {
+      "kind": "funding",
+      "label": "Client agent funds the escrow",
+      "transactionId": "cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a"
+    },
+    {
+      "kind": "ruling",
+      "label": "Two jurors sign the payout transaction",
+      "transactionId": "076a2fb42557afd2ca6118ce438e029c9a49ef43eb8ab8f7a5b00ba2d34fafd3"
+    }
+  ]
+}

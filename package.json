@@ -11,12 +11,17 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "demo:chipnet": "tsx scripts/run-chipnet-demo.ts",
-    "wallet:create": "tsx scripts/create-wallets.ts","demo:finish-refund": "tsx scripts/finish-refund.ts"
+    "wallet:create": "tsx scripts/create-wallets.ts",
+    "demo:finish-refund": "tsx scripts/finish-refund.ts",
+    "agent:mcp": "tsx src/agent/mcpServer.ts",
+    "demo:agent": "tsx scripts/run-agent-session.ts",
+    "demo:publish-agent-cases": "tsx scripts/publish-agent-cases.ts"
   },
   "license": "MIT",
   "type": "module",
   "dependencies": {
     "@bitauth/libauth": "3.0.0",
+    "@modelcontextprotocol/sdk": "1.32.2",
     "cashscript": "0.14.0",
     "zod": "4.6.7"
   },

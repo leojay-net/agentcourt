@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "caseId": "silent-worker",
+  "title": "Scrape a price feed (worker goes silent)",
+  "scenarioKind": "timeout-refund",
+  "network": "chipnet",
+  "specification": {
+    "summary": "The worker accepts the task and never delivers. After the deadline block the client reclaims the escrow with no help from anyone.",
+    "requiredFields": []
+  },
+  "terms": {
+    "clientPublicKeyHashHex": "6c3c3200da09e9c9db59e3b9577e1e733795b494",
+    "workerPublicKeyHashHex": "9ce1fb1268c4add738a9d270e579ac45f40e7431",
+    "jurorPublicKeysHex": [
+      "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+      "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+      "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101"
+    ],
+    "acceptanceHashHex": "8b7edaf61bf1064399a3ba23bf58410d61c203e2b23b6aa3dad5657f78241ea9",
+    "refundBlockHeight": 337704
+  },
+  "contractAddress": "bchtest:pwyslqw460shxqzd7ug6dr72p6chvv4y0valw7s7qcxnnt7fm74hsawxyqqls",
+  "clientAddress": "bchtest:qpkrcvsqmgy7njwmt83mj4m7reen09d5jsvynlpsga",
+  "workerAddress": "bchtest:qzwwr7cjdrz2m4ec48f8pete43zlgrn5xyzx4xhqp5",
+  "escrowSatoshis": 3000,
+  "deliverableText": null,
+  "status": "awaiting-deadline",
+  "verdicts": [],
+  "transactions": [
+    {
+      "kind": "funding",
+      "label": "Client funds the escrow",
+      "transactionId": "2ff5005e2855c4fcad9f688d15240bee3dc3c8c1319022dee0d47f7e97a66657"
+    }
+  ]
+}

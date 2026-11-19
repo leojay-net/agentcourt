@@ -1,0 +1,29 @@
+{
+  "title": "AgentCourt",
+  "subtitle": "Two agents connect to the court over MCP",
+  "fontDirectory": "file:///Users/mac/Desktop/CODE/hackathons/projects/cashmandate/web/node_modules/@fontsource-variable/geist/files",
+  "accentColor": "#0a5c41",
+  "transcriptPath": "agent-session.json",
+  "connect": {
+    "command": "$ claude mcp add agentcourt-client -- npx tsx src/agent/mcpServer.ts\n$ claude mcp add agentcourt-worker -- npx tsx src/agent/mcpServer.ts\n  env AGENTCOURT_AGENT_CONFIG=.keys/agent-config-<role>.json",
+    "configJson": "{\n  \"role\": \"client\" | \"worker\",\n  \"privateKeyHex\": \"<this agent's key only>\",\n  \"parties\": public keys of the\n    other side and the three jurors\n}",
+    "tools": [
+      {
+        "name": "open_escrow",
+        "description": "Client: lock payment in the covenant"
+      },
+      {
+        "name": "list_jobs",
+        "description": "Worker: find funded jobs"
+      },
+      {
+        "name": "deliver_work",
+        "description": "Worker: deliver; hash match pays at once"
+      },
+      {
+        "name": "get_escrow",
+        "description": "Client: read escrow state"
+      }
+    ]
+  }
+}

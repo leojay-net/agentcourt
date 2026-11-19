@@ -1,0 +1,273 @@
+{
+  "jobs": [
+    {
+      "caseId": "short-sourced-market-brief-on-bitcoin-ca-337898",
+      "title": "Short sourced market brief on Bitcoin Cash developer activity",
+      "summary": "Deliver a short sourced market brief on Bitcoin Cash developer activity as a JSON object. The deliverable must stay under 600 bytes total. It must contain: headline (string, at least 12 characters), body (string, at least 120 characters), sources (array, at least 2 items), and confidence (number from 0 to 1).",
+      "mode": "jury",
+      "requiredFields": [
+        {
+          "fieldName": "headline",
+          "kind": "string",
+          "minimumLength": 12
+        },
+        {
+          "fieldName": "body",
+          "kind": "string",
+          "minimumLength": 120
+        },
+        {
+          "fieldName": "sources",
+          "kind": "array",
+          "minimumLength": 2
+        },
+        {
+          "fieldName": "confidence",
+          "kind": "number",
+          "minimumValue": 0,
+          "maximumValue": 1
+        }
+      ],
+      "escrowSatoshis": 3000,
+      "contractAddress": "bchtest:pdrw34p2j2rutlg58mrcg000w32asppr7ncfdawrlqq5m3w65cz97t9855gw4",
+      "terms": {
+        "clientPublicKeyHashHex": "6c3c3200da09e9c9db59e3b9577e1e733795b494",
+        "workerPublicKeyHashHex": "9ce1fb1268c4add738a9d270e579ac45f40e7431",
+        "jurorPublicKeysHex": [
+          "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+          "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+          "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101"
+        ],
+        "acceptanceHashHex": "6391556602c3892bcba056c51aae4d19faa864b2cec2e579feece99eba604736",
+        "refundBlockHeight": 338042
+      },
+      "fundingTransactionId": "cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a",
+      "status": "ruled-for-worker",
+      "deliverableText": "{\"headline\":\"Bitcoin Cash Developer Activity: Steady but Unmeasured\",\"body\":\"Public repos such as Bitcoin Cash Node and BCH Research remain the main venues for protocol work, with CashTokens and adaptive block-size discussion driving recent effort. This brief was written without live repository metrics, so commit and contributor counts are not quantified here.\",\"sources\":[\"github.com/bitcoin-cash-node/bitcoin-cash-node\",\"bitcoincashresearch.org\"],\"confidence\":0.3}",
+      "deliveredAtBlockHeight": 337898,
+      "settlementTransactionId": null,
+      "rulingTransactionId": "076a2fb42557afd2ca6118ce438e029c9a49ef43eb8ab8f7a5b00ba2d34fafd3",
+      "verdicts": [
+        {
+          "jurorLabel": "jurorOne",
+          "jurorPublicKeyHex": "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+          "favoredParty": "worker",
+          "findings": [
+            {
+              "checkName": "deliverable is a JSON object",
+              "passed": true,
+              "detail": "parsed"
+            },
+            {
+              "checkName": "field \"headline\" present",
+              "passed": true,
+              "detail": "present"
+            },
+            {
+              "checkName": "field \"body\" present",
+              "passed": true,
+              "detail": "present"
+            },
+            {
+              "checkName": "field \"sources\" present",
+              "passed": true,
+              "detail": "present"
+            },
+            {
+              "checkName": "field \"confidence\" present",
+              "passed": true,
+              "detail": "present"
+            }
+          ],
+          "reasoning": "The deliverable is a JSON object containing every required field."
+        },
+        {
+          "jurorLabel": "jurorTwo",
+          "jurorPublicKeyHex": "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+          "favoredParty": "worker",
+          "findings": [
+            {
+              "checkName": "field \"headline\" satisfies its constraints",
+              "passed": true,
+              "detail": "54 characters"
+            },
+            {
+              "checkName": "field \"body\" satisfies its constraints",
+              "passed": true,
+              "detail": "285 characters"
+            },
+            {
+              "checkName": "field \"sources\" satisfies its constraints",
+              "passed": true,
+              "detail": "2 items"
+            },
+            {
+              "checkName": "field \"confidence\" satisfies its constraints",
+              "passed": true,
+              "detail": "0.3 is inside the accepted range"
+            }
+          ],
+          "reasoning": "Every required field meets its length and range constraints."
+        },
+        {
+          "jurorLabel": "jurorThree",
+          "jurorPublicKeyHex": "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101",
+          "favoredParty": "worker",
+          "findings": [
+            {
+              "checkName": "deliverable was presented",
+              "passed": true,
+              "detail": "presented"
+            },
+            {
+              "checkName": "delivered before the deadline",
+              "passed": true,
+              "detail": "block 337898 is at or before 338042"
+            }
+          ],
+          "reasoning": "Delivered on time."
+        }
+      ]
+    },
+    {
+      "caseId": "sort-twelve-invoice-totals-ascending-337898",
+      "title": "Sort twelve invoice totals ascending",
+      "summary": "Sort these twelve invoice totals in ascending order: 1250, 310, 1600, 120, 775, 520, 185, 1020, 415, 890, 240, 640. Deliver the sorted result as a JSON array of numbers.",
+      "mode": "hash-check",
+      "requiredFields": [],
+      "escrowSatoshis": 3000,
+      "contractAddress": "bchtest:pdfgewg7zhzrxus6jkvk4gxnkw68knqfdwma2z74euy2p9gx30ejv64mju3s6",
+      "terms": {
+        "clientPublicKeyHashHex": "6c3c3200da09e9c9db59e3b9577e1e733795b494",
+        "workerPublicKeyHashHex": "9ce1fb1268c4add738a9d270e579ac45f40e7431",
+        "jurorPublicKeysHex": [
+          "03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777",
+          "03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98",
+          "03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101"
+        ],
+        "acceptanceHashHex": "f906ba74bab5b44ba8c75404ac42719f1ecb1bee703062ef4453801502658708",
+        "refundBlockHeight": 338042
+      },
+      "fundingTransactionId": "ef92f8cb47567eea3f1313a88ec5393bafa4711d83a89f4d2dff9f9fab78b0e5",
+      "status": "settled",
+      "deliverableText": "[120,185,240,310,415,520,640,775,890,1020,1250,1600]",
+      "deliveredAtBlockHeight": null,
+      "settlementTransactionId": "a9394a8fdece1d0b0b6e0decb647c631283feb64cd38b869918add47687d2f80",
+      "rulingTransactionId": null,
+      "verdicts": []
+    }
+  ],
+  "events": [
+    {
+      "actor": "client-agent",
+      "kind": "task",
+      "text": "Open two escrows to hire the worker agent, each paying 3000 satoshis.\n1. Sort these twelve invoice totals in ascending order: 1250, 310, 1600, 120, 775, 520, 185, 1020, 415, 890, 240, 640. You know the correct answer, so pass expectedResult exactly as this JSON array text: [120,185,240,310,415,520,640,775,890,1020,1250,1600]\n2. A short sourced market brief on Bitcoin Cash developer activity, delivered as a JSON object. You cannot predict the text, so do not pass expectedResult; require fields headline (string, at least 12 characters), body (string, at least 120 characters), sources (array, at least 2 items) and confidence (number from 0 to 1). Say in the summary that the deliverable must stay under 600 bytes.\nThen give a one-paragraph report of the two escrows you opened."
+    },
+    {
+      "actor": "client-agent",
+      "kind": "agent-says",
+      "text": "I'll open both escrows now.\n\n"
+    },
+    {
+      "actor": "client-agent",
+      "kind": "tool-call",
+      "toolName": "open_escrow",
+      "text": "{\"title\":\"Sort twelve invoice totals ascending\",\"summary\":\"Sort these twelve invoice totals in ascending order: 1250, 310, 1600, 120, 775, 520, 185, 1020, 415, 890, 240, 640. Deliver the sorted result as a JSON array of numbers.\",\"expectedResult\":\"[120,185,240,310,415,520,640,775,890,1020,1250,1600]\",\"escrowSatoshis\":3000}"
+    },
+    {
+      "actor": "client-agent",
+      "kind": "tool-result",
+      "toolName": "open_escrow",
+      "text": "{\"ok\":true,\"caseId\":\"sort-twelve-invoice-totals-ascending-337898\",\"contractAddress\":\"bchtest:pdfgewg7zhzrxus6jkvk4gxnkw68knqfdwma2z74euy2p9gx30ejv64mju3s6\",\"fundingTransactionId\":\"ef92f8cb47567eea3f1313a88ec5393bafa4711d83a89f4d2dff9f9fab78b0e5\",\"mode\":\"hash-check\"}",
+      "transactionIds": [
+        "ef92f8cb47567eea3f1313a88ec5393bafa4711d83a89f4d2dff9f9fab78b0e5"
+      ]
+    },
+    {
+      "actor": "client-agent",
+      "kind": "tool-call",
+      "toolName": "open_escrow",
+      "text": "{\"title\":\"Short sourced market brief on Bitcoin Cash developer activity\",\"summary\":\"Deliver a short sourced market brief on Bitcoin Cash developer activity as a JSON object. The deliverable must stay under 600 bytes total. It must contain: headline (string, at least 12 characters), body (string, at least 120 characters), sources (array, at least 2 items), and confidence (number from 0 to 1).\",\"requiredFields\":[{\"fieldName\":\"headline\",\"kind\":\"string\",\"minimumLength\":12},{\"fieldName\":\"body\",\"kind\":\"string\",\"minimumLength\":120},{\"fieldName\":\"sources\",\"kind\":\"array\",\"minimumLength\":2},{\"fieldName\":\"confidence\",\"kind\":\"number\",\"minimumValue\":0,\"maximumValue\":1}],\"escrowSatoshis\":3000}"
+    },
+    {
+      "actor": "client-agent",
+      "kind": "tool-result",
+      "toolName": "open_escrow",
+      "text": "{\"ok\":true,\"caseId\":\"short-sourced-market-brief-on-bitcoin-ca-337898\",\"contractAddress\":\"bchtest:pdrw34p2j2rutlg58mrcg000w32asppr7ncfdawrlqq5m3w65cz97t9855gw4\",\"fundingTransactionId\":\"cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a\",\"mode\":\"jury\"}",
+      "transactionIds": [
+        "cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a"
+      ]
+    },
+    {
+      "actor": "client-agent",
+      "kind": "agent-says",
+      "text": "I opened two escrows, each locking 3,000 satoshis for the worker agent. The first, case `sort-twelve-invoice-totals-ascending-337898` (contract `bchtest:pdfgewg7zhzrxus6jkvk4gxnkw68knqfdwma2z74euy2p9gx30ejv64mju3s6`, funding tx `ef92f8cb47567eea3f1313a88ec5393bafa4711d83a89f4d2dff9f9fab78b0e5`), asks for the twelve invoice totals sorted ascending and runs in hash-check mode because I supplied the exact expected result `[120,185,240,310,415,520,640,775,890,1020,1250,1600]`, so the covenant verifies the deliverable by hash. The second, case `short-sourced-market-brief-on-bitcoin-ca-337898` (contract `bchtest:pdrw34p2j2rutlg58mrcg000w32asppr7ncfdawrlqq5m3w65cz97t9855gw4`, funding tx `cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a`), asks for a short sourced market brief on Bitcoin Cash developer activity as a JSON object, with the summary stating the deliverable must stay under 600 bytes, and runs in jury mode with required fields headline (string, ≥12 chars), body (string, ≥120 chars), sources (array, ≥2 items) and confidence (number 0–1), since I cannot predict the exact text."
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "task",
+      "text": "Call list_jobs, then do every job and deliver each result with deliver_work. Deliver the work exactly as the job asks, with no extra text. Then give a one-paragraph report."
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "agent-says",
+      "text": "I'll start by listing the available jobs.\n\n"
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "tool-call",
+      "toolName": "list_jobs",
+      "text": "{}"
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "tool-result",
+      "toolName": "list_jobs",
+      "text": "[{\"caseId\":\"short-sourced-market-brief-on-bitcoin-ca-337898\",\"title\":\"Short sourced market brief on Bitcoin Cash developer activity\",\"summary\":\"Deliver a short sourced market brief on Bitcoin Cash developer activity as a JSON object. The deliverable must stay under 600 bytes total. It must contain: headline (string, at least 12 characters), body (string, at least 120 characters), sources (array, at least 2 items), and confidence (number from 0 to 1).\",\"mode\":\"jury\",\"requiredFields\":[{\"fieldName\":\"headline\",\"kind\":\"string\",\"minimumLength\":12},{\"fieldName\":\"body\",\"kind\":\"string\",\"minimumLength\":120},{\"fieldName\":\"sources\",\"kind\":\"array\",\"minimumLength\":2},{\"fieldName\":\"confidence\",\"kind\":\"number\",\"minimumValue\":0,\"maximumValue\":1}],\"escrowSatoshis\":3000,\"contractAddress\":\"bchtest:pdrw34p2j2rutlg58mrcg000w32asppr7ncfdawrlqq5m3w65cz97t9855gw4\",\"terms\":{\"clientPublicKeyHashHex\":\"6c3c3200da09e9c9db59e3b9577e1e733795b494\",\"workerPublicKeyHashHex\":\"9ce1fb1268c4add738a9d270e579ac45f40e7431\",\"jurorPublicKeysHex\":[\"03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777\",\"03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98\",\"03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101\"],\"acceptanceHashHex\":\"6391556602c3892bcba056c51aae4d19faa864b2cec2e579feece99eba604736\",\"refundBlockHeight\":338042},\"fundingTransactionId\":\"cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a\",\"status\":\"open\",\"deliverableText\":null,\"deliveredAtBlockHeight\":null,\"settlementTransactionId\":null,\"rulingTransactionId\":null,\"verdicts\":[]},{\"caseId\":\"sort-twelve-invoice-totals-ascending-337898\",\"title\":\"Sort twelve invoice totals ascending\",\"summary\":\"Sort these twelve invoice totals in ascending order: 1250, 310, 1600, 120, 775, 520, 185, 1020, 415, 890, 240, 640. Deliver the sorted result as a JSON array of numbers.\",\"mode\":\"hash-check\",\"requiredFields\":[],\"escrowSatoshis\":3000,\"contractAddress\":\"bchtest:pdfgewg7zhzrxus6jkvk4gxnkw68knqfdwma2z74euy2p9gx30ejv64mju3s6\",\"terms\":{\"clientPublicKeyHashHex\":\"6c3c3200da09e9c9db59e3b9577e1e733795b494\",\"workerPublicKeyHashHex\":\"9ce1fb1268c4add738a9d270e579ac45f40e7431\",\"jurorPublicKeysHex\":[\"03611ce786107fdfba641d1c0d4146cf09ab0b58e4d00ca44b4b363cfbe5912777\",\"03c556bec92f890e82b6a4aafb3df00f4b5cce9f97acf295a0f192f8a1ac93df98\",\"03b33b8b1ea899185fb90423af3ed47f17376d83131aa92094ca888f781f04c101\"],\"acceptanceHashHex\":\"f906ba74bab5b44ba8c75404ac42719f1ecb1bee703062ef4453801502658708\",\"refundBlockHeight\":338042},\"fundingTransactionId\":\"ef92f8cb47567eea3f1313a88ec5393bafa4711d83a89f4d2dff9f9fab78b0e5\",\"status\":\"open\",\"deliverableText\":null,\"deliveredAtBlockHeight\":null,\"settlementTransactionId\":null,\"rulingTransactionId\":null,\"verdicts\":[]}]",
+      "transactionIds": [
+        "cc17a2df069c713d920448ee096fbccb844607a4f6dccb45e7ac5acc1e6b950a",
+        "ef92f8cb47567eea3f1313a88ec5393bafa4711d83a89f4d2dff9f9fab78b0e5"
+      ]
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "tool-call",
+      "toolName": "deliver_work",
+      "text": "{\"caseId\":\"sort-twelve-invoice-totals-ascending-337898\",\"deliverable\":\"[120,185,240,310,415,520,640,775,890,1020,1250,1600]\"}"
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "tool-result",
+      "toolName": "deliver_work",
+      "text": "{\"ok\":true,\"status\":\"settled\",\"settlementTransactionId\":\"a9394a8fdece1d0b0b6e0decb647c631283feb64cd38b869918add47687d2f80\"}",
+      "transactionIds": [
+        "a9394a8fdece1d0b0b6e0decb647c631283feb64cd38b869918add47687d2f80"
+      ]
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "tool-call",
+      "toolName": "deliver_work",
+      "text": "{\"caseId\":\"short-sourced-market-brief-on-bitcoin-ca-337898\",\"deliverable\":\"{\\\"headline\\\":\\\"Bitcoin Cash Developer Activity: Steady but Unmeasured\\\",\\\"body\\\":\\\"Public repos such as Bitcoin Cash Node and BCH Research remain the main venues for protocol work, with CashTokens and adaptive block-size discussion driving recent effort. This brief was written without live repository metrics, so commit and contributor counts are not quantified here.\\\",\\\"sources\\\":[\\\"github.com/bitcoin-cash-node/bitcoin-cash-node\\\",\\\"bitcoincashresearch.org\\\"],\\\"confidence\\\":0.3}\"}"
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "tool-result",
+      "toolName": "deliver_work",
+      "text": "{\"ok\":true,\"status\":\"submitted-to-court\",\"settlementTransactionId\":null}"
+    },
+    {
+      "actor": "worker-agent",
+      "kind": "agent-says",
+      "text": "I found two open jobs and delivered both. The hash-check job (sorting twelve invoice totals ascending) was delivered as `[120,185,240,310,415,520,640,775,890,1020,1250,1600]` and settled immediately, with settlement transaction `a9394a8fdece1d0b0b6e0decb647c631283feb64cd38b869918add47687d2f80` paying the 3,000 satoshi escrow. The jury job (a short sourced market brief on Bitcoin Cash developer activity) was delivered as a JSON object meeting all required fields — a 12+ character headline, a 120+ character body, two sources, and a confidence value — and was submitted to the court for review, so no settlement transaction exists yet; I set confidence low (0.3) and stated in the body that no live repository metrics were available, since I had no tool to verify commit or contributor counts and did not want to invent figures."
+    },
+    {
+      "actor": "court",
+      "kind": "court-ruling",
+      "text": "Short sourced market brief on Bitcoin Cash developer activity: ruled-for-worker\njurorOne: worker (The deliverable is a JSON object containing every required field.)\njurorTwo: worker (Every required field meets its length and range constraints.)\njurorThree: worker (Delivered on time.)",
+      "transactionIds": [
+        "076a2fb42557afd2ca6118ce438e029c9a49ef43eb8ab8f7a5b00ba2d34fafd3"
+      ]
+    }
+  ]
+}
