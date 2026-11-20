@@ -5,6 +5,7 @@ import { Docket } from './components/Docket';
 import { EscrowDrafter } from './components/EscrowDrafter';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
+import { TopBanner } from './components/TopBanner';
 import { Hero } from './components/Hero';
 import { PathExplorer } from './components/PathExplorer';
 
@@ -26,6 +27,7 @@ export function App() {
 
   return (
     <MotionConfig reducedMotion="user">
+      <TopBanner />
       <Header />
       <main>
         <Hero records={records} />

@@ -85,6 +85,12 @@ The court service (`src/agent/courtService.ts`) is the only process holding juro
 
 No MCP client? Open the web app, go to "Run an agent", and paste a key for any OpenAI-compatible provider that supports tool calling (the default address is Vultr Serverless Inference). A client agent, a worker agent and the court then run in your tab, using the same four tools as the MCP server against the same covenants. The network is simulated and the keys are generated in the page, so it costs nothing and touches no chain. The key is kept in the tab's memory and is sent only to the provider address you entered. For real chipnet funds, connect an MCP client as above.
 
+### Mainnet, funded from your wallet
+
+Switch the console to "Bitcoin Cash mainnet" and connect a wallet with [WizardConnect](https://docs.riftenlabs.com/wizardconnect/) (scan the code with Cashonize, Paytaca or Selene). Choose 8,000, 10,000 or 15,000 sats and send from your wallet to a client agent key generated in the page. The agents then open a real escrow, the worker settles it with the real covenant, and "Return leftover funds to my wallet" sweeps what remains. Download the session keys before closing the tab, because they exist only in that page. The wallet signs and broadcasts the funding transaction; the covenant spends are signed in the page by the throwaway keys, so the wallet is never asked to sign a contract input.
+
+Status: the wallet transfer builder is covered by unit tests against a fake wallet, the WizardConnect pairing screen and mainnet Electrum access are checked in a real browser, and no mainnet transaction is recorded yet. The first one is added here once it exists.
+
 ## Transactions on chipnet
 
 | Case | Path | Transactions |
@@ -100,7 +106,7 @@ The refund path is proven by the contract tests. On chipnet the refund transacti
 
 ## Tests
 
-`npm test` runs 29 tests. The contract tests execute the compiled script in a VM and cover the attacks the covenant is meant to stop: wrong deliverable, wrong signer, redirected payout, extra output, inflated fee, early refund, a single juror, the same juror twice, a payout to a third party, and a token burn.
+`npm test` runs 32 tests. The contract tests execute the compiled script in a VM and cover the attacks the covenant is meant to stop: wrong deliverable, wrong signer, redirected payout, extra output, inflated fee, early refund, a single juror, the same juror twice, a payout to a third party, and a token burn.
 
 ## Honest limits
 

@@ -1,10 +1,13 @@
 import { useRef, useState } from 'react';
 import type { JobFile } from '../../../src/agent/jobModel';
-import { createCourtSandbox, type CourtSandbox } from '../agent/courtSandbox';
+import { createCourtSandbox, createMainnetCourt, type CourtWorld } from '../agent/courtSandbox';
 import { DEFAULT_MODEL_SETTINGS, ModelRequestError, runToolLoop, type AgentEvent, type AgentTool, type ModelSettings } from '../agent/modelClient';
+import { sendFromWallet } from '../wallet/walletTransfer';
+import { useWizardWallet } from '../wallet/useWizardWallet';
 import { ActionButton } from './Button';
 import { ModelSettingsForm } from './ModelSettingsForm';
 import { SessionTrace, type TraceEntry } from './SessionTrace';
+import { WalletPanel, shortenAddress } from './WalletPanel';
 import styles from './AgentConsole.module.css';
 
 const DEFAULT_CLIENT_TASK = [
@@ -13,6 +16,18 @@ const DEFAULT_CLIENT_TASK = [
   '2. A short sourced market brief on Bitcoin Cash developer activity, delivered as a JSON object. You cannot predict the text, so do not pass expectedResult; require fields headline (string, at least 12 characters), body (string, at least 120 characters), sources (array, at least 2 items) and confidence (number from 0 to 1). Say in the summary that the deliverable must stay under 600 bytes.',
   'Then give a one-paragraph report of the two escrows you opened.',
 ].join('\n');
+
+const MAINNET_CLIENT_TASK = [
+  'Open one escrow to hire the worker agent, paying 3000 satoshis.',
+  'Sort these six invoice totals in ascending order: 640, 120, 415, 1020, 185, 775. You know the correct answer, so pass expectedResult exactly as this JSON array text: [120,185,415,640,775,1020]',
+  'Then give a one-paragraph report of the escrow you opened.',
+].join('\n');
+
+const MAINNET_FUNDING_CHOICES_SATOSHIS = [8_000, 10_000, 15_000] as const;
+const EXPLORER_TRANSACTION_URL = 'https://blockchair.com/bitcoin-cash/transaction/';
+
+type NetworkMode = 'simulated' | 'mainnet';
+type FundingStatus = 'idle' | 'sending' | 'sent';
 
 const WORKER_TASK =
   'Call list_jobs, then do every job and deliver each result with deliver_work. Deliver the work exactly as the job asks, with no extra text. Then give a one-paragraph report.';
@@ -63,10 +78,20 @@ export function AgentConsole() {
   const [jobs, setJobs] = useState<JobFile[]>([]);
   const [failureMessage, setFailureMessage] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [mode, setMode] = useState<NetworkMode>('simulated');
+  const wallet = useWizardWallet('AgentCourt');
+  const mainnetCourtRef = useRef<ReturnType<typeof createMainnetCourt> | null>(null);
+  const [fundingChoice, setFundingChoice] = useState<number>(MAINNET_FUNDING_CHOICES_SATOSHIS[1]);
+  const [fundingStatus, setFundingStatus] = useState<FundingStatus>('idle');
+  const [fundingTransactionId, setFundingTransactionId] = useState<string | null>(null);
+  const [returnTransactionIds, setReturnTransactionIds] = useState<string[]>([]);
+  const [isReturningFunds, setIsReturningFunds] = useState(false);
   const nextEntryIdentifier = useRef(0);
 
   const isRunning = phase === 'client' || phase === 'worker' || phase === 'court';
-  const canRun = settings.apiKey.trim() !== '' && clientTask.trim() !== '' && !isRunning;
+  const isMainnet = mode === 'mainnet';
+  const canRun =
+    settings.apiKey.trim() !== '' && clientTask.trim() !== '' && !isRunning && (!isMainnet || fundingStatus === 'sent');
 
   function appendEntry(stage: string, event: AgentEvent): void {
     nextEntryIdentifier.current += 1;
@@ -76,7 +101,7 @@ export function AgentConsole() {
     });
   }
 
-  async function runAgent(sandbox: CourtSandbox, stage: string, roleDescription: string, task: string, tools: readonly AgentTool[], signal: AbortSignal): Promise<void> {
+  async function runAgent(sandbox: CourtWorld, stage: string, roleDescription: string, task: string, tools: readonly AgentTool[], signal: AbortSignal): Promise<void> {
     await runToolLoop({
       settings,
       systemPrompt: SYSTEM_PROMPT(roleDescription),
@@ -94,7 +119,7 @@ export function AgentConsole() {
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
     const { signal } = abortController;
-    const sandbox = createCourtSandbox();
+    const sandbox = isMainnet ? obtainMainnetCourt().world : createCourtSandbox();
     setEntries([]);
     setJobs([]);
     setFailureMessage(null);
@@ -118,6 +143,64 @@ export function AgentConsole() {
     }
   }
 
+  function obtainMainnetCourt(): ReturnType<typeof createMainnetCourt> {
+    mainnetCourtRef.current ??= createMainnetCourt();
+    return mainnetCourtRef.current;
+  }
+
+  function chooseMode(nextMode: NetworkMode): void {
+    if (isRunning) return;
+    setMode(nextMode);
+    setClientTask(nextMode === 'mainnet' ? MAINNET_CLIENT_TASK : DEFAULT_CLIENT_TASK);
+    setEntries([]);
+    setJobs([]);
+    setFailureMessage(null);
+    setPhase('idle');
+  }
+
+  async function fundAgents(): Promise<void> {
+    if (wallet.manager === null) return;
+    const mainnetCourt = obtainMainnetCourt();
+    setFailureMessage(null);
+    setFundingStatus('sending');
+    try {
+      const receipt = await sendFromWallet({
+        manager: wallet.manager,
+        provider: mainnetCourt.provider,
+        toAddress: mainnetCourt.world.clientAddress,
+        satoshis: BigInt(fundingChoice),
+        userPrompt: `Fund the AgentCourt client agent with ${fundingChoice.toLocaleString('en-US')} sats`,
+      });
+      setFundingTransactionId(receipt.transactionId);
+      setFundingStatus('sent');
+    } catch (failure) {
+      setFundingStatus('idle');
+      setFailureMessage(explainFailure(failure));
+    }
+  }
+
+  async function returnFundsToWallet(): Promise<void> {
+    if (wallet.address === null || mainnetCourtRef.current === null) return;
+    setIsReturningFunds(true);
+    try {
+      setReturnTransactionIds(await mainnetCourtRef.current.world.returnFundsTo(wallet.address));
+    } catch (failure) {
+      setFailureMessage(explainFailure(failure));
+    } finally {
+      setIsReturningFunds(false);
+    }
+  }
+
+  function downloadSessionKeys(): void {
+    if (mainnetCourtRef.current === null) return;
+    const blob = new Blob([mainnetCourtRef.current.exportKeys()], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'agentcourt-session-keys.json';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
   function stopSession(): void {
     abortControllerRef.current?.abort();
   }
@@ -129,8 +212,8 @@ export function AgentConsole() {
         <h2 className={styles.title}>Run the agents here</h2>
         <p className={styles.intro}>
           No agent system of your own? Give a model a key and the same four tools the MCP server exposes run in this tab,
-          against a private simulated court. The covenants are the real scripts, so a payout the contract forbids fails
-          here exactly as it would on chipnet. Only the network and the keys are throwaway.
+          against a private simulated court, or against real Bitcoin Cash mainnet funded from your wallet. The covenants
+          are the real scripts, so a payout the contract forbids fails here exactly as it would on chain.
         </p>
 
         <div className={styles.layout}>
@@ -141,6 +224,65 @@ export function AgentConsole() {
               if (canRun) void runSession();
             }}
           >
+            <div className={styles.modeSwitch} role="group" aria-label="Network">
+              <button type="button" data-active={!isMainnet} disabled={isRunning} onClick={function simulated() { chooseMode('simulated'); }}>
+                Simulated, free
+              </button>
+              <button type="button" data-active={isMainnet} disabled={isRunning} onClick={function mainnet() { chooseMode('mainnet'); }}>
+                Bitcoin Cash mainnet
+              </button>
+            </div>
+            {isMainnet ? (
+              <div className={styles.mainnet}>
+                <p className={styles.mainnetNote}>
+                  Real money, a few cents. Your wallet funds a client agent key made in this page. Its agents open a real escrow,
+                  the worker settles it, and you can send what is left back to your wallet. Download the session keys first if
+                  you may close the tab.
+                </p>
+                <WalletPanel wallet={wallet} />
+                <div className={styles.fundingRow}>
+                  <label className={styles.field}>
+                    <span>Fund the client agent</span>
+                    <select
+                      className={styles.select}
+                      value={fundingChoice}
+                      disabled={fundingStatus !== 'idle'}
+                      onChange={function onFundingChange(event) {
+                        setFundingChoice(Number(event.target.value));
+                      }}
+                    >
+                      {MAINNET_FUNDING_CHOICES_SATOSHIS.map(function renderChoice(choice) {
+                        return (
+                          <option key={choice} value={choice}>
+                            {choice.toLocaleString('en-US')} sats
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
+                  <ActionButton
+                    type="button"
+                    variant="secondary"
+                    isLoading={fundingStatus === 'sending'}
+                    disabled={!wallet.isReady || fundingStatus !== 'idle'}
+                    onClick={function fund() { void fundAgents(); }}
+                  >
+                    {fundingStatus === 'sent' ? 'Funded' : 'Send from wallet'}
+                  </ActionButton>
+                </div>
+                {fundingTransactionId === null ? null : (
+                  <p className={styles.mainnetNote}>
+                    Funding transaction{' '}
+                    <a href={`${EXPLORER_TRANSACTION_URL}${fundingTransactionId}`} target="_blank" rel="noreferrer">
+                      {shortenAddress(fundingTransactionId)}
+                    </a>
+                  </p>
+                )}
+                <button type="button" className={styles.linkButton} onClick={downloadSessionKeys}>
+                  Download session keys
+                </button>
+              </div>
+            ) : null}
             <label className={styles.field}>
               <span>Brief for the client agent</span>
               <textarea
@@ -197,6 +339,20 @@ export function AgentConsole() {
                 </ul>
               )}
             </div>
+            {isMainnet && phase === 'done' ? (
+              <div className={styles.returnRow}>
+                <ActionButton type="button" variant="secondary" isLoading={isReturningFunds} onClick={function sendBack() { void returnFundsToWallet(); }}>
+                  Return leftover funds to my wallet
+                </ActionButton>
+                {returnTransactionIds.map(function renderReturn(transactionId) {
+                  return (
+                    <a key={transactionId} href={`${EXPLORER_TRANSACTION_URL}${transactionId}`} target="_blank" rel="noreferrer">
+                      {shortenAddress(transactionId)}
+                    </a>
+                  );
+                })}
+              </div>
+            ) : null}
             <SessionTrace entries={entries} />
           </div>
         </div>
