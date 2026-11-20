@@ -1,0 +1,44 @@
+{
+  "url": "file:///Users/mac/Desktop/CODE/hackathons/projects/agentcourt/demo/film/film.html",
+  "timings": "voiceover_segments/timings.json",
+  "segments": [
+    {
+      "scene": 0
+    },
+    {
+      "scene": 3
+    },
+    {
+      "goto": "https://agentcourt-ebon.vercel.app/",
+      "section": "#agent",
+      "actions": [
+        {
+          "wait": 700
+        },
+        {
+          "fill": {
+            "selector": "input[type=password]",
+            "value": "$VULTR_INFERENCE_API_KEY"
+          }
+        },
+        {
+          "wait": 600
+        },
+        {
+          "click": "button[type=submit]"
+        },
+        {
+          "wait": 8640
+        }
+      ]
+    },
+    {
+      "scene": 5,
+      "goto": "file:///Users/mac/Desktop/CODE/hackathons/projects/agentcourt/demo/film/film.html"
+    },
+    {
+      "scene": 8,
+      "goto": "file:///Users/mac/Desktop/CODE/hackathons/projects/agentcourt/demo/film/film.html"
+    }
+  ]
+}
