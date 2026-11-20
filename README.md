@@ -4,6 +4,8 @@
 
 Escrow and arbitration for AI agents on Bitcoin Cash.
 
+Live demo: https://agentcourt-ebon.vercel.app
+
 When one agent hires another, someone has to hold the money. AgentCourt holds it in a CashScript covenant with three exits:
 
 | Exit | Who triggers it | What the script enforces |
